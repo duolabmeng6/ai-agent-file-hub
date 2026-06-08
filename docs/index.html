@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI智能体文件中枢 - Agent File Hub</title>
+    <meta
+      name="description"
+      content="AI智能体文件中枢，把本地目录、对象存储、SFTP、Git 仓库统一成面向人和 Agent 的文件、记忆与技能基础设施。"
+    />
+    <meta name="theme-color" content="#0d1b2a" />
+    <meta property="og:title" content="AI智能体文件中枢" />
+    <meta
+      property="og:description"
+      content="统一文件、长期记忆、技能资产与 MCP 协作入口。"
+    />
+    <meta property="og:type" content="website" />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #0f1720;
+        --muted: #5d6b7b;
+        --paper: #f7f5ef;
+        --panel: #ffffff;
+        --line: #d9dedc;
+        --blue: #0f62fe;
+        --green: #0e8f63;
+        --amber: #c87500;
+        --dark: #0d1b2a;
+        --dark-soft: #17283b;
+        --shadow: 0 24px 70px rgba(13, 27, 42, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: ui-serif, "Songti SC", "Noto Serif CJK SC", Georgia, serif;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .site-nav {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 16px 28px;
+        color: #fff;
+        background: linear-gradient(180deg, rgba(8, 17, 27, 0.82), rgba(8, 17, 27, 0));
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.42);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(12px);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 14px;
+      }
+
+      .nav-links a {
+        opacity: 0.88;
+      }
+
+      .nav-links a:hover {
+        opacity: 1;
+      }
+
+      .hero {
+        position: relative;
+        min-height: 88svh;
+        display: grid;
+        align-items: end;
+        overflow: hidden;
+        color: #fff;
+        background-image:
+          linear-gradient(90deg, rgba(5, 13, 23, 0.92) 0%, rgba(5, 13, 23, 0.7) 38%, rgba(5, 13, 23, 0.28) 100%),
+          url("./assets/product-preview.png");
+        background-position: center;
+        background-size: cover;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 28%;
+        background: linear-gradient(180deg, rgba(247, 245, 239, 0), var(--paper));
+        pointer-events: none;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 140px 0 92px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 18px;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        color: #9fe7c8;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 28px;
+        height: 2px;
+        border-radius: 999px;
+        background: #9fe7c8;
+      }
+
+      h1 {
+        max-width: 780px;
+        margin: 0;
+        font-size: 58px;
+        line-height: 1.05;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .hero-copy {
+        max-width: 680px;
+        margin: 24px 0 0;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.86);
+        overflow-wrap: anywhere;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 32px;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.34);
+        font-weight: 800;
+      }
+
+      .button.primary {
+        background: #fff;
+        color: var(--dark);
+      }
+
+      .button.secondary {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px);
+      }
+
+      .section {
+        padding: 88px 0;
+      }
+
+      .section.dark {
+        color: #fff;
+        background: var(--dark);
+      }
+
+      .wrap {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 24px;
+        margin-bottom: 28px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 34px;
+        line-height: 1.18;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .section-lede {
+        max-width: 680px;
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        overflow-wrap: anywhere;
+      }
+
+      .dark .section-lede {
+        color: rgba(255, 255, 255, 0.68);
+      }
+
+      .install-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+        gap: 18px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .dark .panel {
+        border-color: rgba(255, 255, 255, 0.14);
+        background: var(--dark-soft);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+      }
+
+      .terminal {
+        overflow: hidden;
+      }
+
+      .terminal-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 13px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .dots {
+        display: flex;
+        gap: 7px;
+      }
+
+      .dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ff5f57;
+      }
+
+      .dots span:nth-child(2) {
+        background: #ffbd2e;
+      }
+
+      .dots span:nth-child(3) {
+        background: #28c840;
+      }
+
+      pre {
+        margin: 0;
+        padding: 22px;
+        overflow-x: auto;
+        color: #e7fff4;
+        background: #07121e;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .copy-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .copy-button {
+        min-height: 38px;
+        padding: 0 13px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-weight: 800;
+      }
+
+      .quick-facts {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+      }
+
+      .fact {
+        padding: 16px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .fact strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 18px;
+      }
+
+      .fact span {
+        color: rgba(255, 255, 255, 0.68);
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 14px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .feature {
+        padding: 22px;
+        min-height: 170px;
+      }
+
+      .feature-kicker {
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 13px;
+        color: var(--green);
+        font-weight: 900;
+      }
+
+      .feature h3,
+      .download h3 {
+        margin: 10px 0 8px;
+        font-size: 22px;
+        line-height: 1.22;
+      }
+
+      .feature p,
+      .download p {
+        margin: 0;
+        color: var(--muted);
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 15px;
+      }
+
+      .downloads {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .download {
+        padding: 22px;
+      }
+
+      .download ul {
+        display: grid;
+        gap: 9px;
+        padding: 0;
+        margin: 18px 0 0;
+        list-style: none;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      }
+
+      .download a {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-top: 1px solid var(--line);
+        color: var(--blue);
+        font-weight: 800;
+      }
+
+      .download a small {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .requirements {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--line);
+      }
+
+      .requirement {
+        padding: 18px;
+        background: var(--panel);
+      }
+
+      .requirement strong {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 18px;
+      }
+
+      .requirement span {
+        display: block;
+        color: var(--muted);
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+        font-size: 14px;
+      }
+
+      .footer {
+        padding: 42px 0;
+        color: rgba(255, 255, 255, 0.7);
+        background: #08111b;
+        font-family: ui-sans-serif, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      }
+
+      .footer .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .footer a {
+        color: #fff;
+        font-weight: 800;
+      }
+
+      @media (max-width: 860px) {
+        .site-nav {
+          padding: 14px 18px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          min-height: 86svh;
+          background-position: 58% center;
+        }
+
+        .hero-inner {
+          width: calc(100% - 28px);
+          max-width: 680px;
+          padding: 116px 0 72px;
+        }
+
+        h1 {
+          font-size: 34px;
+        }
+
+        .hero-copy {
+          font-size: 16px;
+          max-width: 330px;
+          word-break: break-all;
+        }
+
+        .section {
+          padding: 58px 0;
+        }
+
+        .section-head,
+        .install-grid,
+        .feature-grid,
+        .downloads,
+        .requirements {
+          grid-template-columns: 1fr;
+        }
+
+        .wrap {
+          width: calc(100% - 28px);
+          max-width: 680px;
+        }
+
+        pre {
+          font-size: 13px;
+          white-space: pre-wrap;
+          word-break: break-word;
+        }
+
+        h2,
+        .section-lede {
+          max-width: 330px;
+          word-break: normal;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-nav" aria-label="主导航">
+      <a class="brand" href="#top" aria-label="AI智能体文件中枢首页">
+        <span class="brand-mark">AF</span>
+        <span>Agent File Hub</span>
+      </a>
+      <div class="nav-links">
+        <a href="#install">安装</a>
+        <a href="#features">能力</a>
+        <a href="#downloads">下载</a>
+        <a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub</a>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div class="hero-inner">
+        <p class="eyebrow">File OS for Agents</p>
+        <h1>AI智能体文件中枢</h1>
+        <p class="hero-copy">
+          把本地目录、OSS/S3、SFTP、Git 仓库统一成一个面向人和 AI Agent 的文件、记忆与技能基础设施，并通过浏览器、REST、OpenAPI 与 MCP 访问同一套资产。
+        </p>
+        <div class="hero-actions" aria-label="主要操作">
+          <a class="button primary" href="#install">查看安装方法</a>
+          <a class="button secondary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.0">下载 v1.0.0</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section dark" id="install">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2>最快部署</h2>
+              <p class="section-lede">默认宿主机端口是 18787，容器内服务监听 9000。数据目录和默认本地储存器会持久化到 Docker volume。</p>
+            </div>
+            <a class="button secondary" href="https://hub.docker.com/r/duolabmeng/agent_file_hub">Docker Hub</a>
+          </div>
+          <div class="install-grid">
+            <div class="terminal panel">
+              <div class="terminal-top">
+                <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                <span>shell</span>
+              </div>
+              <pre><code id="compose-command">git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
+cd ai-agent-file-hub
+AGENT_FILE_HUB_VERSION=v1.0.0 sh run.sh</code></pre>
+            </div>
+            <aside class="quick-facts panel" aria-label="部署信息">
+              <div class="fact">
+                <strong>访问地址</strong>
+                <span>http://127.0.0.1:18787</span>
+              </div>
+              <div class="fact">
+                <strong>镜像标签</strong>
+                <span>duolabmeng/agent_file_hub:v1.0.0</span>
+              </div>
+              <div class="fact">
+                <strong>持久化目录</strong>
+                <span>/app/data 与 /app/storage</span>
+              </div>
+              <div class="copy-row">
+                <button class="copy-button" data-copy="compose-command">复制 Compose 命令</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2>为 Agent 准备的文件基础设施</h2>
+              <p class="section-lede">同一套文件资产可以服务人类界面、自动化脚本和 MCP 客户端。</p>
+            </div>
+          </div>
+          <div class="feature-grid">
+            <article class="feature panel">
+              <div class="feature-kicker">Memory</div>
+              <h3>长期记忆中心</h3>
+              <p>用目录和 Markdown 承载项目上下文、知识库、Prompt、Workflow 与历史版本。</p>
+            </article>
+            <article class="feature panel">
+              <div class="feature-kicker">Storage</div>
+              <h3>多储存器接入</h3>
+              <p>统一接入本地目录、OSS、S3-compatible、SFTP 和 Git 仓库。</p>
+            </article>
+            <article class="feature panel">
+              <div class="feature-kicker">MCP</div>
+              <h3>Agent 协作入口</h3>
+              <p>共享目录可以生成 REST、OpenAPI 和 MCP Endpoint，让 Agent 安全访问工作区。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="downloads">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2>下载 v1.0.0</h2>
+              <p class="section-lede">Docker 部署覆盖 linux/amd64 与 linux/arm64；桌面和服务器也可以直接下载二进制运行。</p>
+            </div>
+            <a class="button primary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.0">Releases</a>
+          </div>
+          <div class="downloads">
+            <article class="download panel">
+              <h3>Linux</h3>
+              <p>服务器和容器基础平台。</p>
+              <ul>
+                <li><a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-linux-amd64">amd64 <small>下载</small></a></li>
+                <li><a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-linux-arm64">arm64 <small>下载</small></a></li>
+              </ul>
+            </article>
+            <article class="download panel">
+              <h3>macOS</h3>
+              <p>Intel Mac 与 Apple Silicon。</p>
+              <ul>
+                <li><a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-darwin-amd64">Intel <small>下载</small></a></li>
+                <li><a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-darwin-arm64">Apple Silicon <small>下载</small></a></li>
+              </ul>
+            </article>
+            <article class="download panel">
+              <h3>Windows</h3>
+              <p>Windows 10 及以上。</p>
+              <ul>
+                <li><a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-windows-amd64.exe">x64 <small>下载</small></a></li>
+                <li><a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-windows-arm64.exe">ARM64 <small>下载</small></a></li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2>系统要求</h2>
+              <p class="section-lede">生产环境推荐使用 Docker Compose，二进制部署适合轻量服务器和本机试用。</p>
+            </div>
+          </div>
+          <div class="requirements">
+            <div class="requirement">
+              <strong>Docker</strong>
+              <span>Docker 24+ / Compose v2</span>
+              <span>linux/amd64 / linux/arm64</span>
+            </div>
+            <div class="requirement">
+              <strong>Windows</strong>
+              <span>Windows 10 及以上</span>
+              <span>x64 / ARM64</span>
+            </div>
+            <div class="requirement">
+              <strong>macOS</strong>
+              <span>macOS 12 Monterey 及以上</span>
+              <span>Intel / Apple Silicon</span>
+            </div>
+            <div class="requirement">
+              <strong>Linux</strong>
+              <span>主流 glibc 或 musl 发行版</span>
+              <span>x64 / ARM64</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <span>AI智能体文件中枢 · v1.0.0</span>
+        <a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub 仓库</a>
+      </div>
+    </footer>
+
+    <script>
+      document.querySelectorAll("[data-copy]").forEach((button) => {
+        button.addEventListener("click", async () => {
+          const target = document.getElementById(button.dataset.copy);
+          if (!target) return;
+          await navigator.clipboard.writeText(target.textContent.trim());
+          const oldText = button.textContent;
+          button.textContent = "已复制";
+          setTimeout(() => {
+            button.textContent = oldText;
+          }, 1600);
+        });
+      });
+    </script>
+  </body>
+</html>
