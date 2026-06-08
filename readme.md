@@ -4,14 +4,15 @@
 
 ## 下载与安装
 
-推荐使用 Docker Compose 部署，Dockerfile 会按版本号从 Releases 下载对应 Linux 二进制构建镜像。也可以直接使用 Docker Hub 镜像，或下载 Windows、macOS、Linux 二进制手动运行。
+安装分为两种模式：服务器推荐 Docker 模式，本机体验和轻量部署可以直接下载对应系统二进制运行。
 
-### Docker Compose
+### 模式一：Docker 运行
 
 ```sh
-git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
-cd ai-agent-file-hub
-AGENT_FILE_HUB_VERSION=v1.0.0 sh run.sh
+u=http://my.rongyiapi.com
+p=/ai-agent-file-hub/install.sh
+curl -fsSL "$u$p" -o install.sh
+bash install.sh
 ```
 
 默认访问地址：`http://127.0.0.1:18787`
@@ -20,22 +21,46 @@ AGENT_FILE_HUB_VERSION=v1.0.0 sh run.sh
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.0` | 要下载和构建的 Release 版本 |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.0` | 要部署的 Release 版本 |
 | `HOST_PORT` | `18787` | 映射到宿主机的端口 |
+| `AGENT_FILE_HUB_HOME` | `~/agent-file-hub` | 安装目录 |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
 | `FILE_BROWSER_AUTH_PASSWORD` | 空 | 初始化管理员密码，留空时进入页面初始化 |
 
-### Docker Run
+手动 Docker Compose：
+
+```sh
+git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
+cd ai-agent-file-hub
+AGENT_FILE_HUB_VERSION=v1.0.0 HOST_PORT=18787 sh run.sh
+```
+
+手动 Docker Run：
 
 ```sh
 docker run -d \
   --name agent_file_hub \
   --restart unless-stopped \
   -p 18787:9000 \
+  -e PORT=9000 \
+  -e GIN_MODE=release \
+  -e FILE_BROWSER_ROOT=/app/storage \
   -v agent_file_hub_data:/app/data \
-  -v agent_file_hub_storage:/app/storage \
+  -v "$PWD/storage:/app/storage" \
   duolabmeng/agent_file_hub:v1.0.0
 ```
+
+### 模式二：直接运行
+
+Linux x64 示例：
+
+```sh
+curl -L -o agent_file_hub https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-linux-amd64
+chmod +x agent_file_hub
+PORT=18787 FILE_BROWSER_ROOT=./storage ./agent_file_hub
+```
+
+macOS 和 Windows 请在 Releases 下载对应架构文件运行。
 
 ### 系统要求
 
