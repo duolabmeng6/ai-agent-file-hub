@@ -14,14 +14,14 @@ cd ai-agent-file-hub
 AGENT_FILE_HUB_VERSION=v1.0.0 sh run.sh
 ```
 
-默认访问地址：`http://127.0.0.1:9000`
+默认访问地址：`http://127.0.0.1:18787`
 
 常用环境变量：
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `AGENT_FILE_HUB_VERSION` | `v1.0.0` | 要下载和构建的 Release 版本 |
-| `HOST_PORT` | `9000` | 映射到宿主机的端口 |
+| `HOST_PORT` | `18787` | 映射到宿主机的端口 |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
 | `FILE_BROWSER_AUTH_PASSWORD` | 空 | 初始化管理员密码，留空时进入页面初始化 |
 
@@ -31,7 +31,7 @@ AGENT_FILE_HUB_VERSION=v1.0.0 sh run.sh
 docker run -d \
   --name agent_file_hub \
   --restart unless-stopped \
-  -p 9000:9000 \
+  -p 18787:9000 \
   -v agent_file_hub_data:/app/data \
   -v agent_file_hub_storage:/app/storage \
   duolabmeng/agent_file_hub:v1.0.0

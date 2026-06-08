@@ -16,7 +16,7 @@ services:
       FILE_BROWSER_AUTH_USERNAME: ${FILE_BROWSER_AUTH_USERNAME:-admin}
       FILE_BROWSER_AUTH_PASSWORD: ${FILE_BROWSER_AUTH_PASSWORD:-}
     ports:
-      - "${HOST_PORT:-9000}:9000"
+      - "${HOST_PORT:-18787}:9000"
     volumes:
       - agent_file_hub_data:/app/data
       - agent_file_hub_storage:/app/storage
