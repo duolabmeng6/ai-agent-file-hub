@@ -2,6 +2,75 @@
 
 `ai-agent-file-hub` 是面向 AI 智能体时代的统一文件、记忆与技能基础设施。当前代码提供 Go + Vue 3 文件中枢，可统一接入本地目录、OSS、S3-compatible 对象存储、SFTP 服务器和 Git 仓库，并通过浏览器、REST、OpenAPI 与 MCP 暴露给人类用户和 AI 智能体。
 
+## 下载与安装
+
+推荐使用 Docker Compose 部署，Dockerfile 会按版本号从 Releases 下载对应 Linux 二进制构建镜像。也可以直接使用 Docker Hub 镜像，或下载 Windows、macOS、Linux 二进制手动运行。
+
+### Docker Compose
+
+```sh
+git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
+cd ai-agent-file-hub
+AGENT_FILE_HUB_VERSION=v1.0.0 sh run.sh
+```
+
+默认访问地址：`http://127.0.0.1:9000`
+
+常用环境变量：
+
+| 变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.0` | 要下载和构建的 Release 版本 |
+| `HOST_PORT` | `9000` | 映射到宿主机的端口 |
+| `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
+| `FILE_BROWSER_AUTH_PASSWORD` | 空 | 初始化管理员密码，留空时进入页面初始化 |
+
+### Docker Run
+
+```sh
+docker run -d \
+  --name agent_file_hub \
+  --restart unless-stopped \
+  -p 9000:9000 \
+  -v agent_file_hub_data:/app/data \
+  -v agent_file_hub_storage:/app/storage \
+  duolabmeng/agent_file_hub:v1.0.0
+```
+
+### 系统要求
+
+| 系统 | 最低版本 | 架构 |
+| --- | --- | --- |
+| Windows | Windows 10 及以上 | x64 / ARM64 |
+| macOS | macOS 12 Monterey 及以上 | Intel x64 / Apple Silicon arm64 |
+| Linux | glibc 或 musl 主流发行版 | x64 / ARM64 |
+| Docker | Docker 24+，Docker Compose v2 | linux/amd64 / linux/arm64 |
+
+### 二进制下载
+
+访问 [Releases](https://github.com/duolabmeng6/ai-agent-file-hub/releases) 下载对应版本。
+
+Linux：
+
+| 文件 | 说明 |
+| --- | --- |
+| `agent_file_hub-linux-amd64` | x64 服务器二进制，下载后 `chmod +x` 运行 |
+| `agent_file_hub-linux-arm64` | ARM64 服务器二进制，适合 ARM 云服务器和开发板 |
+
+Windows：
+
+| 文件 | 说明 |
+| --- | --- |
+| `agent_file_hub-windows-amd64.exe` | Windows x64 可执行文件 |
+| `agent_file_hub-windows-arm64.exe` | Windows ARM64 可执行文件 |
+
+macOS：
+
+| 文件 | 说明 |
+| --- | --- |
+| `agent_file_hub-darwin-amd64` | Intel Mac 二进制，下载后 `chmod +x` 运行 |
+| `agent_file_hub-darwin-arm64` | Apple Silicon 二进制，下载后 `chmod +x` 运行 |
+
 一句话定位：
 
 > AI Agent File Hub：面向智能体时代的统一文件、记忆与技能基础设施。
