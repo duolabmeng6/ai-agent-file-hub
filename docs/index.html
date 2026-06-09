@@ -207,10 +207,30 @@
       h1 {
         max-width: 610px;
         margin: 0;
-        font-size: 64px;
-        line-height: 1.06;
+        font-size: 62px;
+        line-height: 1.02;
         letter-spacing: 0;
-        overflow-wrap: anywhere;
+      }
+
+      .hero-title {
+        display: grid;
+        gap: 4px;
+      }
+
+      .hero-title-ai,
+      .hero-title-main {
+        display: block;
+        white-space: nowrap;
+      }
+
+      .hero-title-ai {
+        color: var(--blue);
+        font-size: 0.92em;
+        font-weight: 800;
+      }
+
+      .hero-title-main {
+        font-size: 1em;
       }
 
       .hero-copy {
@@ -908,7 +928,7 @@
         }
 
         h1 {
-          font-size: 48px;
+          font-size: 56px;
         }
 
         .hero-copy {
@@ -965,7 +985,11 @@
         }
 
         h1 {
-          font-size: 36px;
+          font-size: 44px;
+        }
+
+        .hero-title-main {
+          font-size: 0.76em;
         }
 
         .hero-copy,
@@ -1143,7 +1167,10 @@
       <div class="wrap hero-grid">
         <div class="hero-copy-block">
           <p class="eyebrow">Agent File Hub</p>
-          <h1>AI智能体文件中枢</h1>
+          <h1 class="hero-title">
+            <span class="hero-title-ai">AI</span>
+            <span class="hero-title-main">智能体文件中枢</span>
+          </h1>
           <p class="hero-copy">
             把本地目录、OSS/S3、SFTP、Git 仓库统一成一个面向人和 AI Agent 的文件、记忆与技能基础设施。
           </p>
