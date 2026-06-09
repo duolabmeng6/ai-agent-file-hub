@@ -565,7 +565,8 @@
         font-family: var(--mono);
         font-size: 14px;
         line-height: 1.55;
-        overflow-wrap: anywhere;
+        overflow-x: auto;
+        white-space: nowrap;
       }
 
       .text-link {
@@ -850,9 +851,8 @@
         padding: 14px;
         font-size: 12px;
         line-height: 1.62;
-        white-space: pre-wrap;
+        white-space: pre;
         word-break: normal;
-        overflow-wrap: anywhere;
       }
 
       .start-actions {
@@ -893,6 +893,141 @@
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         gap: 18px;
+      }
+
+      .quick-start {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+        gap: 34px;
+        align-items: center;
+        padding: 44px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 113, 227, 0.16);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(0, 113, 227, 0.09), rgba(255, 255, 255, 0.96) 46%),
+          #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .quick-start-head {
+        display: grid;
+        gap: 14px;
+      }
+
+      .quick-start-head h2 {
+        font-size: 46px;
+        line-height: 1.08;
+      }
+
+      .quick-start-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 18px;
+      }
+
+      .quick-kicker {
+        width: max-content;
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 999px;
+        color: var(--blue);
+        background: rgba(0, 113, 227, 0.09);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .quick-command {
+        min-width: 0;
+        padding: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 14px 38px rgba(0, 0, 0, 0.08);
+      }
+
+      .quick-command-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .quick-command-label {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .quick-command-text {
+        margin: 0;
+        padding: 17px 18px;
+        border-radius: 7px;
+        color: #f5f5f7;
+        background: #1f1f21;
+        font-family: var(--mono);
+        font-size: 15px;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .quick-copy {
+        min-width: 72px;
+        background: var(--blue);
+      }
+
+      .quick-copy:hover {
+        background: var(--blue-hover);
+      }
+
+      .quick-points {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .quick-point {
+        display: grid;
+        grid-template-columns: 26px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+        padding: 14px;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.74);
+      }
+
+      .quick-point::before {
+        content: "";
+        width: 22px;
+        height: 22px;
+        margin-top: 1px;
+        border-radius: 50%;
+        background:
+          linear-gradient(135deg, rgba(0, 113, 227, 0.2), rgba(0, 113, 227, 0.08)),
+          rgba(0, 113, 227, 0.08);
+        box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.72);
+      }
+
+      .quick-point-copy {
+        display: grid;
+        gap: 4px;
+      }
+
+      .quick-point strong {
+        font-size: 17px;
+      }
+
+      .quick-point span {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.55;
       }
 
       .skill-panel {
@@ -1068,8 +1203,13 @@
         .download-actions.split,
         .requirements,
         .run-grid,
+        .quick-start,
         .skill-panel {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .quick-start {
+          padding: 34px;
         }
 
         .downloads.four,
@@ -1162,6 +1302,8 @@
         .download-actions.split,
         .requirements,
         .run-grid,
+        .quick-start,
+        .quick-points,
         .skill-panel {
           grid-template-columns: 1fr;
         }
@@ -1202,6 +1344,36 @@
 
         .install-card {
           overflow: hidden;
+        }
+
+        .quick-start {
+          padding: 22px;
+          gap: 20px;
+        }
+
+        .quick-start-head {
+          text-align: left;
+        }
+
+        .quick-start-head h2 {
+          font-size: 31px;
+        }
+
+        .quick-start-head p {
+          font-size: 16px;
+        }
+
+        .quick-command {
+          padding: 14px;
+        }
+
+        .quick-command-top {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .quick-command-text {
+          font-size: 13px;
         }
 
         .install-card.agent-card {
@@ -1280,8 +1452,8 @@
         }
 
         pre {
-          overflow-x: hidden;
-          white-space: pre-wrap;
+          overflow-x: auto;
+          white-space: pre;
           word-break: break-all;
           font-size: 13px;
         }
@@ -1584,37 +1756,42 @@
 
       <section class="section">
         <div class="wrap">
-          <div class="section-head">
-            <div>
-              <h2>服务器部署</h2>
-              <p class="section-lede">一键脚本会生成 Compose 配置。云服务器、私有服务器和现有 Docker 运维体系可以使用下面的命令。</p>
+          <div class="quick-start">
+            <div class="quick-start-head">
+              <span class="quick-kicker">服务器推荐</span>
+              <h2>立即开始</h2>
+              <p>只需一条命令，即可快速安装 AgentFileHub。脚本会创建目录、生成 Compose 配置、拉取镜像并启动服务。</p>
             </div>
-          </div>
 
-          <div class="run-grid">
-            <div class="terminal">
-              <div class="terminal-top">
-                <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
-                <span>docker compose</span>
+            <div>
+              <div class="quick-command">
+                <div class="quick-command-top">
+                  <span class="quick-command-label">安装命令</span>
+                  <button class="copy-button quick-copy" data-copy="server-install-command">复制</button>
+                </div>
+                <p class="quick-command-text" id="server-install-command">curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && bash install.sh</p>
               </div>
-              <pre><code id="compose-up">git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
-cd ai-agent-file-hub
-AGENT_FILE_HUB_VERSION=v1.0.0 HOST_PORT=18787 sh run.sh</code></pre>
-            </div>
-            <div class="terminal">
-              <div class="terminal-top">
-                <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
-                <span>docker run</span>
+
+              <div class="quick-points">
+                <div class="quick-point">
+                  <div class="quick-point-copy">
+                    <strong>快速安装</strong>
+                    <span>一键生成 Compose 配置，无需手动拼接命令。</span>
+                  </div>
+                </div>
+                <div class="quick-point">
+                  <div class="quick-point-copy">
+                    <strong>自动配置</strong>
+                    <span>自动创建目录、拉取镜像，并绑定 18787 端口。</span>
+                  </div>
+                </div>
+                <div class="quick-point">
+                  <div class="quick-point-copy">
+                    <strong>即刻使用</strong>
+                    <span>安装完成后打开 http://127.0.0.1:18787 初始化账号。</span>
+                  </div>
+                </div>
               </div>
-              <pre><code id="docker-run">docker run -d --name agent_file_hub \
-  --restart unless-stopped \
-  -p 18787:9000 \
-  -e PORT=9000 \
-  -e GIN_MODE=release \
-  -e FILE_BROWSER_ROOT=/app/storage \
-  -v agent_file_hub_data:/app/data \
-  -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.0</code></pre>
             </div>
           </div>
         </div>
