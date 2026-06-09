@@ -408,6 +408,13 @@
           #fff;
       }
 
+      .install-card.deploy-card {
+        grid-template-columns: minmax(0, 0.66fr) minmax(0, 1.34fr);
+        align-items: center;
+        gap: 26px;
+        padding: 26px 28px;
+      }
+
       .install-card.agent-card {
         grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
         align-items: center;
@@ -439,6 +446,21 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
+      }
+
+      .deploy-main,
+      .deploy-copy {
+        display: grid;
+        align-content: start;
+        min-width: 0;
+      }
+
+      .deploy-main {
+        gap: 16px;
+      }
+
+      .deploy-copy {
+        gap: 10px;
       }
 
       .mode-top {
@@ -477,6 +499,73 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+      }
+
+      .deploy-facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .deploy-fact {
+        display: inline-grid;
+        gap: 2px;
+        min-height: 46px;
+        padding: 7px 11px;
+        border: 1px solid rgba(0, 113, 227, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .deploy-fact strong {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .deploy-fact span {
+        color: var(--text);
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .command-copy-card {
+        min-width: 0;
+        padding: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        background: #1f1f21;
+      }
+
+      .command-copy-card .prompt-actions {
+        color: rgba(255, 255, 255, 0.62);
+      }
+
+      .command-copy-card .prompt-label {
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .command-copy-card .text-link {
+        color: #8bc5ff;
+      }
+
+      .command-copy-card .copy-button {
+        color: var(--text);
+        background: #fff;
+      }
+
+      .command-copy-text {
+        margin: 12px 0 0;
+        padding: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 7px;
+        color: #f5f5f7;
+        background: #171719;
+        font-family: var(--mono);
+        font-size: 14px;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
       }
 
       .text-link {
@@ -1120,6 +1209,11 @@
           gap: 18px;
         }
 
+        .install-card.deploy-card {
+          grid-template-columns: 1fr;
+          gap: 18px;
+        }
+
         .install-card h3 {
           font-size: 25px;
         }
@@ -1157,6 +1251,23 @@
 
         .prompt-actions .mode-actions {
           order: 2;
+        }
+
+        .deploy-facts {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .deploy-fact {
+          min-height: auto;
+        }
+
+        .command-copy-card {
+          padding: 16px;
+        }
+
+        .command-copy-text {
+          font-size: 13px;
         }
 
         .skill-terminal {
@@ -1299,39 +1410,40 @@
               </div>
             </article>
 
-            <article class="install-card featured">
-              <div class="mode-top">
-                <span class="mode-tag">推荐 · 服务器</span>
+            <article class="install-card featured deploy-card">
+              <div class="deploy-main">
+                <div class="mode-top">
+                  <span class="mode-tag">推荐 · 服务器</span>
+                </div>
+                <h3>Docker 模式</h3>
+                <p>一行命令生成 Compose 配置、拉取镜像并后台运行。</p>
+                <div class="deploy-facts" aria-label="Docker 部署信息">
+                  <div class="deploy-fact">
+                    <strong>访问地址</strong>
+                    <span>127.0.0.1:18787</span>
+                  </div>
+                  <div class="deploy-fact">
+                    <strong>镜像</strong>
+                    <span>v1.0.0</span>
+                  </div>
+                  <div class="deploy-fact">
+                    <strong>安装目录</strong>
+                    <span>~/agent-file-hub</span>
+                  </div>
+                </div>
               </div>
-              <h3>Docker 模式</h3>
-              <p>创建目录、生成 compose、拉取镜像并后台运行。</p>
-              <div class="terminal">
-                <div class="terminal-top">
-                  <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
-                  <span>一键安装</span>
+
+              <div class="deploy-copy">
+                <div class="command-copy-card">
+                  <div class="prompt-actions">
+                    <div class="prompt-label">一键安装</div>
+                    <div class="mode-actions">
+                      <button class="copy-button" data-copy="docker-install-command">复制命令</button>
+                      <a class="text-link" href="./install.sh">查看 install.sh</a>
+                    </div>
+                  </div>
+                  <p class="command-copy-text" id="docker-install-command">curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && bash install.sh</p>
                 </div>
-                <pre><code id="docker-install-command">u=https://my.rongyiapi.com
-p=/ai-agent-file-hub/install.sh
-curl -fsSL "$u$p" -o install.sh
-bash install.sh</code></pre>
-              </div>
-              <aside class="info-panel" aria-label="Docker 部署信息">
-                <div class="fact">
-                  <strong>访问地址</strong>
-                  <span>http://127.0.0.1:18787</span>
-                </div>
-                <div class="fact">
-                  <strong>镜像标签</strong>
-                  <span>duolabmeng/agent_file_hub:v1.0.0</span>
-                </div>
-                <div class="fact">
-                  <strong>安装目录</strong>
-                  <span>~/agent-file-hub</span>
-                </div>
-              </aside>
-              <div class="mode-actions">
-                <button class="copy-button" data-copy="docker-install-command">复制一键安装命令</button>
-                <a class="text-link" href="./install.sh">查看 install.sh</a>
               </div>
             </article>
 
