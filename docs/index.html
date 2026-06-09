@@ -388,6 +388,13 @@
           #fff;
       }
 
+      .install-card.agent-card {
+        border-color: rgba(0, 113, 227, 0.28);
+        background:
+          linear-gradient(180deg, rgba(0, 113, 227, 0.09), rgba(255, 255, 255, 0.96) 58%),
+          #fff;
+      }
+
       .mode-top {
         display: flex;
         align-items: center;
@@ -755,10 +762,10 @@
 
       .skill-panel {
         display: grid;
-        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-        gap: 22px;
+        grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+        gap: 24px;
         align-items: stretch;
-        padding: 28px;
+        padding: 30px;
         border: 1px solid var(--line-soft);
         border-radius: 8px;
         background: #fff;
@@ -784,34 +791,76 @@
         font-size: 15px;
       }
 
-      .skill-paths {
+      .agent-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .agent-pill {
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 11px;
+        border: 1px solid rgba(0, 113, 227, 0.15);
+        border-radius: 999px;
+        color: var(--blue);
+        background: rgba(0, 113, 227, 0.08);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .skill-proof {
         display: grid;
-        gap: 0;
+        gap: 10px;
+        padding-top: 12px;
         border-top: 1px solid var(--line-soft);
       }
 
-      .skill-path {
-        display: grid;
-        gap: 4px;
-        padding: 13px 0;
-        border-bottom: 1px solid var(--line-soft);
-      }
-
-      .skill-path strong {
-        font-size: 13px;
-      }
-
-      .skill-path span {
+      .skill-proof span {
         color: var(--muted);
-        font-family: var(--mono);
-        font-size: 12px;
-        overflow-wrap: anywhere;
+        font-size: 13px;
       }
 
       .skill-console {
         display: grid;
         gap: 12px;
         min-width: 0;
+      }
+
+      .skill-prompt-card {
+        min-width: 0;
+        padding: 24px;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background:
+          linear-gradient(180deg, rgba(0, 113, 227, 0.08), rgba(255, 255, 255, 0) 62%),
+          var(--surface-soft);
+      }
+
+      .install-card .skill-prompt-card {
+        background: #fff;
+      }
+
+      .prompt-label {
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .prompt-text {
+        margin: 10px 0 0;
+        color: var(--text);
+        font-size: clamp(20px, 2.4vw, 30px);
+        font-weight: 700;
+        line-height: 1.24;
+        overflow-wrap: anywhere;
+      }
+
+      .skill-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
       }
 
       .skill-terminal {
@@ -1004,6 +1053,10 @@
           overflow: hidden;
         }
 
+        .install-card h3 {
+          font-size: 25px;
+        }
+
         .install-card .terminal {
           width: 100%;
           max-width: calc(100vw - 72px);
@@ -1016,6 +1069,14 @@
 
         .skill-panel {
           padding: 18px;
+        }
+
+        .skill-prompt-card {
+          padding: 18px;
+        }
+
+        .prompt-text {
+          font-size: 18px;
         }
 
         .skill-terminal {
@@ -1087,7 +1148,7 @@
             把本地目录、OSS/S3、SFTP、Git 仓库统一成一个面向人和 AI Agent 的文件、记忆与技能基础设施。
           </p>
           <div class="hero-actions" aria-label="主要操作">
-            <a class="button primary" href="#install">查看安装方法</a>
+            <a class="button primary" href="#install">复制安装入口</a>
             <a class="button secondary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.0">下载 v1.0.0</a>
           </div>
           <div class="hero-meta" aria-label="版本和部署信息">
@@ -1120,13 +1181,34 @@
         <div class="wrap">
           <div class="section-head">
             <div>
-              <h2>两种安装模式</h2>
-              <p class="section-lede">服务器推荐 Docker；本机体验可直接运行二进制。</p>
+              <h2>一分钟启动</h2>
+              <p class="section-lede">最省事的方式是把一句话发给 AI Agent；服务器推荐 Docker；本机体验可以直接运行二进制。</p>
             </div>
             <a class="button secondary" href="https://hub.docker.com/r/duolabmeng/agent_file_hub">Docker Hub</a>
           </div>
 
           <div class="install-modes">
+            <article class="install-card agent-card" id="codex-skill">
+              <div class="mode-top">
+                <span class="mode-tag">最省事 · AI Agent</span>
+              </div>
+              <h3>一句话安装 AgentFileHub</h3>
+              <p>发给 OpenClaw、Claude 或 Codex。智能体读取 Skill 文件后，会检查系统、端口、Docker 环境，并完成安装和访问验证。</p>
+              <div class="skill-prompt-card">
+                <div class="prompt-label">复制后发给你的 AI Agent</div>
+                <p class="prompt-text" id="agent-skill-prompt">请帮我安装 AgentFileHub，安装技能:<br />https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md</p>
+              </div>
+              <div class="mode-actions">
+                <button class="copy-button" data-copy="agent-skill-prompt">复制一句话</button>
+                <a class="text-link" href="https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md">查看 Skill 文件</a>
+              </div>
+              <div class="agent-strip" aria-label="支持的智能体">
+                <span class="agent-pill">OpenClaw</span>
+                <span class="agent-pill">Claude</span>
+                <span class="agent-pill">Codex</span>
+              </div>
+            </article>
+
             <article class="install-card featured">
               <div class="mode-top">
                 <span class="mode-tag">推荐 · 服务器</span>
@@ -1302,60 +1384,6 @@ bash install.sh</code></pre>
         <div class="wrap">
           <div class="section-head">
             <div>
-              <h2>智能安装技能</h2>
-              <p class="section-lede">把技能安装到 Codex 后，发一句话就能让智能体检查环境、选择安装方式、启动 AgentFileHub 并验证访问地址。</p>
-            </div>
-          </div>
-
-          <div class="skill-panel" id="codex-skill">
-            <div class="skill-intro">
-              <span class="mode-tag">Codex Skill</span>
-              <h3>agent-file-hub</h3>
-              <p>面向最终用户安装 AgentFileHub 应用。推荐 Docker 部署，也支持 macOS、Linux、Windows 直接运行和源码构建。</p>
-              <div class="skill-paths" aria-label="技能路径">
-                <div class="skill-path">
-                  <strong>公开技能地址</strong>
-                  <span>https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md</span>
-                </div>
-                <div class="skill-path">
-                  <strong>用户安装路径</strong>
-                  <span>~/.agents/skills/agent-file-hub/SKILL.md</span>
-                </div>
-                <div class="skill-path">
-                  <strong>发版 SOP</strong>
-                  <span>https://my.rongyiapi.com/ai-agent-file-hub/release-sop.md</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="skill-console">
-              <div class="terminal skill-terminal">
-                <div class="terminal-top">
-                  <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
-                  <span>安装 Skill</span>
-                </div>
-                <pre><code id="codex-skill-install-command">mkdir -p ~/.agents/skills/agent-file-hub && curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md -o ~/.agents/skills/agent-file-hub/SKILL.md</code></pre>
-              </div>
-              <div class="terminal skill-terminal">
-                <div class="terminal-top">
-                  <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
-                  <span>发给智能体</span>
-                </div>
-                <pre><code id="codex-skill-call-command">请使用 $agent-file-hub 帮我安装 AgentFileHub，优先使用 Docker 方式，完成后验证 http://127.0.0.1:18787 是否可以访问。</code></pre>
-              </div>
-              <div class="mode-actions">
-                <button class="copy-button" data-copy="codex-skill-install-command">复制 Skill 安装命令</button>
-                <button class="copy-button light" data-copy="codex-skill-call-command">复制给智能体的一句话</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <div class="section-head">
-            <div>
               <h2>服务器部署</h2>
               <p class="section-lede">一键脚本会生成 Compose 配置。云服务器、私有服务器和现有 Docker 运维体系可以使用下面的命令。</p>
             </div>
@@ -1441,7 +1469,8 @@ AGENT_FILE_HUB_VERSION=v1.0.0 HOST_PORT=18787 sh run.sh</code></pre>
         button.addEventListener("click", async () => {
           const target = document.getElementById(button.dataset.copy);
           if (!target) return;
-          await navigator.clipboard.writeText(target.textContent.trim());
+          const text = target.textContent.replace(/\s+/g, " ").trim();
+          await navigator.clipboard.writeText(text);
           const oldText = button.textContent;
           button.textContent = "已复制";
           setTimeout(() => {

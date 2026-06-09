@@ -5,7 +5,11 @@ description: Use when a user wants to install, deploy, start, update, or trouble
 
 # AgentFileHub Installer
 
-Use this skill when the user invokes `$agent-file-hub` or asks Codex to install, deploy, start, update, uninstall, or troubleshoot AgentFileHub.
+Use this skill when the user invokes `$agent-file-hub`, shares this public Skill URL, or asks an AI agent such as OpenClaw, Claude, or Codex to install, deploy, start, update, uninstall, or troubleshoot AgentFileHub.
+
+If the user says only "请帮我安装 AgentFileHub，安装技能: https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md", treat that sentence as full authorization to read this skill, inspect the local environment, choose the best install mode, install AgentFileHub, start it, and verify access.
+
+Default recommendation: use Docker Compose for servers and long-running deployments. Use direct release binaries when Docker is unavailable or the user wants a quick local trial.
 
 ## Default Targets
 

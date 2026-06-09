@@ -116,7 +116,7 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 
 官网页面上的版本号、Release 链接、二进制下载链接、Docker 标签和页脚版本都必须随 tag 更新。
 
-## Codex 安装技能发版规则
+## AI Agent 安装技能发版规则
 
 `agent-file-hub` skill 面向最终用户安装 AgentFileHub 应用。
 
@@ -132,17 +132,13 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md
 ```
 
-用户安装命令：
-
-```bash
-mkdir -p ~/.agents/skills/agent-file-hub && curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md -o ~/.agents/skills/agent-file-hub/SKILL.md
-```
-
 发给智能体的一句话：
 
 ```text
-请使用 $agent-file-hub 帮我安装 AgentFileHub，优先使用 Docker 方式，完成后验证 http://127.0.0.1:18787 是否可以访问。
+请帮我安装 AgentFileHub，安装技能: https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md
 ```
+
+官网只展示这一句话和 Skill 文件地址。详细安装命令、环境判断、Docker Compose、直接运行和排障流程保留在 `SKILL.md`。
 
 ## 发版后验收
 
@@ -172,7 +168,7 @@ docker pull duolabmeng/agent_file_hub:latest
 
 - 官网首页显示当前版本。
 - 下载链接指向当前 tag。
-- 智能安装技能区块显示公开 Skill 地址和复制命令。
+- 智能安装技能区块显示一句话安装入口和公开 Skill 地址。
 - GitHub 图标跳转到 `https://github.com/duolabmeng6/ai-agent-file-hub`。
 
 ## 失败恢复
