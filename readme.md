@@ -9,7 +9,7 @@
 ### 模式一：Docker 运行
 
 ```sh
-u=http://my.rongyiapi.com
+u=https://my.rongyiapi.com
 p=/ai-agent-file-hub/install.sh
 curl -fsSL "$u$p" -o install.sh
 bash install.sh
@@ -61,6 +61,20 @@ PORT=18787 FILE_BROWSER_ROOT=./storage ./agent_file_hub
 ```
 
 macOS 和 Windows 请在 Releases 下载对应架构文件运行。
+
+### Codex 智能安装技能
+
+把技能安装到 Codex 后，新线程发送 `$agent-file-hub`，智能体会检查环境、选择安装方式、启动服务并验证访问地址。
+
+```sh
+mkdir -p ~/.agents/skills/agent-file-hub && curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md -o ~/.agents/skills/agent-file-hub/SKILL.md
+```
+
+发给智能体的一句话：
+
+```text
+请使用 $agent-file-hub 帮我安装 AgentFileHub，优先使用 Docker 方式，完成后验证 http://127.0.0.1:18787 是否可以访问。
+```
 
 ### 系统要求
 

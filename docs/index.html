@@ -126,21 +126,51 @@
       }
 
       .nav-cta {
-        min-height: 28px;
+        width: 30px;
+        height: 30px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0 13px;
+        padding: 0;
+        border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 999px;
-        color: #fff;
-        background: var(--blue);
-        font-size: 12px;
-        font-weight: 600;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.74);
+        transition:
+          border-color 0.18s ease,
+          background-color 0.18s ease,
+          transform 0.18s ease;
       }
 
       .nav-cta:hover,
+      .github-link:hover {
+        border-color: rgba(0, 0, 0, 0.18);
+        background: #fff;
+        transform: translateY(-1px);
+      }
+
+      .nav-cta svg,
+      .github-link svg {
+        width: 17px;
+        height: 17px;
+        display: block;
+        fill: currentColor;
+      }
+
       .button.primary:hover {
         background: var(--blue-hover);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
 
       .wrap {
@@ -723,6 +753,77 @@
         gap: 18px;
       }
 
+      .skill-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+        gap: 22px;
+        align-items: stretch;
+        padding: 28px;
+        border: 1px solid var(--line-soft);
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: var(--shadow-soft);
+      }
+
+      .skill-intro {
+        display: grid;
+        align-content: start;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      .skill-intro h3 {
+        margin: 0;
+        font-size: 30px;
+        line-height: 1.16;
+      }
+
+      .skill-intro p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .skill-paths {
+        display: grid;
+        gap: 0;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .skill-path {
+        display: grid;
+        gap: 4px;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .skill-path strong {
+        font-size: 13px;
+      }
+
+      .skill-path span {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+
+      .skill-console {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .skill-terminal {
+        box-shadow: none;
+      }
+
+      .skill-terminal pre {
+        white-space: pre-wrap;
+        word-break: normal;
+        overflow-wrap: anywhere;
+      }
+
       .footer {
         padding: 34px 0;
         border-top: 1px solid var(--line-soft);
@@ -744,6 +845,13 @@
         font-weight: 600;
       }
 
+      .footer .github-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text);
+      }
+
       @media (max-width: 980px) {
         .hero-grid {
           grid-template-columns: 1fr;
@@ -763,7 +871,8 @@
         .install-modes,
         .download-actions.split,
         .requirements,
-        .run-grid {
+        .run-grid,
+        .skill-panel {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
@@ -774,6 +883,10 @@
         }
 
         .start-row {
+          grid-template-columns: 1fr;
+        }
+
+        .skill-panel {
           grid-template-columns: 1fr;
         }
       }
@@ -848,7 +961,8 @@
         .downloads,
         .download-actions.split,
         .requirements,
-        .run-grid {
+        .run-grid,
+        .skill-panel {
           grid-template-columns: 1fr;
         }
 
@@ -865,14 +979,16 @@
 
         .section-head,
         .install-modes,
-        .install-card {
+        .install-card,
+        .skill-panel {
           max-width: calc(100vw - 28px);
           min-width: 0;
         }
 
         .section-head > *,
         .wrap > *,
-        .install-card > * {
+        .install-card > *,
+        .skill-panel > * {
           min-width: 0;
           max-width: 100%;
         }
@@ -894,6 +1010,15 @@
         }
 
         .start-command {
+          width: 100%;
+          max-width: calc(100vw - 64px);
+        }
+
+        .skill-panel {
+          padding: 18px;
+        }
+
+        .skill-terminal {
           width: 100%;
           max-width: calc(100vw - 64px);
         }
@@ -942,8 +1067,13 @@
           <a href="#install">安装</a>
           <a href="#features">能力</a>
           <a href="#downloads">下载</a>
-          <a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub</a>
-          <a class="nav-cta" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.0">下载</a>
+          <a href="#codex-skill">技能</a>
+          <a class="nav-cta" href="https://github.com/duolabmeng6/ai-agent-file-hub" aria-label="GitHub 仓库">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 .5A12 12 0 0 0 8.2 23.88c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.43 11.43 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.93.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z" />
+            </svg>
+            <span class="sr-only">GitHub 仓库</span>
+          </a>
         </div>
       </nav>
     </div>
@@ -1008,7 +1138,7 @@
                   <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
                   <span>一键安装</span>
                 </div>
-                <pre><code id="docker-install-command">u=http://my.rongyiapi.com
+                <pre><code id="docker-install-command">u=https://my.rongyiapi.com
 p=/ai-agent-file-hub/install.sh
 curl -fsSL "$u$p" -o install.sh
 bash install.sh</code></pre>
@@ -1112,7 +1242,7 @@ bash install.sh</code></pre>
                   <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
                   <span>install.sh</span>
                 </div>
-                <pre><code id="download-docker-command">u=http://my.rongyiapi.com;p=/ai-agent-file-hub/install.sh;curl -fsSL "$u$p" -o install.sh && bash install.sh</code></pre>
+                <pre><code id="download-docker-command">u=https://my.rongyiapi.com;p=/ai-agent-file-hub/install.sh;curl -fsSL "$u$p" -o install.sh && bash install.sh</code></pre>
               </div>
               <div class="start-actions">
                 <button class="copy-button light" data-copy="download-docker-command">复制 Docker 脚本</button>
@@ -1164,6 +1294,60 @@ bash install.sh</code></pre>
                 <a class="button secondary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-windows-arm64.exe">下载 ARM64</a>
               </div>
             </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2>智能安装技能</h2>
+              <p class="section-lede">把技能安装到 Codex 后，发一句话就能让智能体检查环境、选择安装方式、启动 AgentFileHub 并验证访问地址。</p>
+            </div>
+          </div>
+
+          <div class="skill-panel" id="codex-skill">
+            <div class="skill-intro">
+              <span class="mode-tag">Codex Skill</span>
+              <h3>agent-file-hub</h3>
+              <p>面向最终用户安装 AgentFileHub 应用。推荐 Docker 部署，也支持 macOS、Linux、Windows 直接运行和源码构建。</p>
+              <div class="skill-paths" aria-label="技能路径">
+                <div class="skill-path">
+                  <strong>公开技能地址</strong>
+                  <span>https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md</span>
+                </div>
+                <div class="skill-path">
+                  <strong>用户安装路径</strong>
+                  <span>~/.agents/skills/agent-file-hub/SKILL.md</span>
+                </div>
+                <div class="skill-path">
+                  <strong>发版 SOP</strong>
+                  <span>https://my.rongyiapi.com/ai-agent-file-hub/release-sop.md</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="skill-console">
+              <div class="terminal skill-terminal">
+                <div class="terminal-top">
+                  <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                  <span>安装 Skill</span>
+                </div>
+                <pre><code id="codex-skill-install-command">mkdir -p ~/.agents/skills/agent-file-hub && curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md -o ~/.agents/skills/agent-file-hub/SKILL.md</code></pre>
+              </div>
+              <div class="terminal skill-terminal">
+                <div class="terminal-top">
+                  <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                  <span>发给智能体</span>
+                </div>
+                <pre><code id="codex-skill-call-command">请使用 $agent-file-hub 帮我安装 AgentFileHub，优先使用 Docker 方式，完成后验证 http://127.0.0.1:18787 是否可以访问。</code></pre>
+              </div>
+              <div class="mode-actions">
+                <button class="copy-button" data-copy="codex-skill-install-command">复制 Skill 安装命令</button>
+                <button class="copy-button light" data-copy="codex-skill-call-command">复制给智能体的一句话</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1243,7 +1427,12 @@ AGENT_FILE_HUB_VERSION=v1.0.0 HOST_PORT=18787 sh run.sh</code></pre>
     <footer class="footer">
       <div class="wrap">
         <span>AI智能体文件中枢 · v1.0.0</span>
-        <a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub 仓库</a>
+        <a class="github-link" href="https://github.com/duolabmeng6/ai-agent-file-hub" aria-label="GitHub 仓库">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 .5A12 12 0 0 0 8.2 23.88c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.43 11.43 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.93.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z" />
+          </svg>
+          <span>GitHub 仓库</span>
+        </a>
       </div>
     </footer>
 
