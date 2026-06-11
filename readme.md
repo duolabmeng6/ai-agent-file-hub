@@ -2,9 +2,23 @@
 
 `ai-agent-file-hub` 是面向 AI 智能体时代的统一文件、记忆与技能基础设施。当前代码提供 Go + Vue 3 文件中枢，可统一接入本地目录、OSS、S3-compatible 对象存储、SFTP 服务器和 Git 仓库，并通过浏览器、REST、OpenAPI 与 MCP 暴露给人类用户和 AI 智能体。
 
+![Agent File Hub 产品界面](docs/assets/product-preview.png)
+
+## 一句话安装
+
+把下面这句话发给 OpenClaw、Claude 或 Codex，智能体会读取安装技能，自动检查环境、选择安装方式、启动服务并验证访问地址。
+
+```text
+请帮我安装 AgentFileHub，安装技能: https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md
+```
+
+![AgentFileHub AI Agent 智能安装流程](docs/assets/readme-agent-skill-flow.svg)
+
 ## 下载与安装
 
 安装分为两种模式：服务器推荐 Docker 模式，本机体验和轻量部署可以直接下载对应系统二进制运行。
+
+![AgentFileHub 三种安装方式](docs/assets/readme-install-options.svg)
 
 ### 模式一：Docker 运行
 
@@ -342,6 +356,8 @@ Git 储存器用于把文件记忆和技能资产变成可追踪资产。
 - Workspace 二进制上传默认限制为 10 MB
 
 ## 技术架构
+
+![AgentFileHub 技术架构](docs/assets/readme-architecture.svg)
 
 ```text
 web/app

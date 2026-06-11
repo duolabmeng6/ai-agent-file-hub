@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="680" viewBox="0 0 1280 680" role="img" aria-labelledby="title desc">
+  <title id="title">AgentFileHub 技术架构</title>
+  <desc id="desc">展示浏览器、REST、OpenAPI、MCP 到 Go 服务和多种储存器驱动的架构。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfbfd"/>
+      <stop offset="1" stop-color="#f1f3f7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <rect width="1280" height="680" rx="34" fill="url(#bg)"/>
+  <text x="70" y="86" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="42" font-weight="800">统一文件、记忆与 Agent 访问入口</text>
+  <text x="70" y="124" fill="#6e6e73" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="20">同一套文件资产可以给浏览器用户、自动化脚本和 AI Agent 使用。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="190" width="250" height="360" rx="18" fill="#ffffff" stroke="#d2d2d7"/>
+    <text x="105" y="245" fill="#0071e3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">入口层</text>
+    <text x="105" y="298" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="26" font-weight="800">Browser UI</text>
+    <text x="105" y="350" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="26" font-weight="800">REST API</text>
+    <text x="105" y="402" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="26" font-weight="800">OpenAPI</text>
+    <text x="105" y="454" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="26" font-weight="800">MCP Endpoint</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="405" y="190" width="470" height="360" rx="18" fill="#ffffff" stroke="#d2d2d7"/>
+    <text x="440" y="245" fill="#0071e3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">服务层</text>
+    <rect x="440" y="282" width="400" height="58" rx="12" fill="#f5f5f7"/>
+    <text x="468" y="319" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">Gin HTTP Server</text>
+    <rect x="440" y="366" width="400" height="58" rx="12" fill="#f5f5f7"/>
+    <text x="468" y="403" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">Storage / File / Share / Workspace</text>
+    <rect x="440" y="450" width="400" height="58" rx="12" fill="#f5f5f7"/>
+    <text x="468" y="487" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">MCP / Sync / DocSite / Audit</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="960" y="190" width="250" height="360" rx="18" fill="#ffffff" stroke="#d2d2d7"/>
+    <text x="995" y="245" fill="#0071e3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">储存器驱动</text>
+    <text x="995" y="298" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="800">Local</text>
+    <text x="995" y="350" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="800">OSS / S3</text>
+    <text x="995" y="402" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="800">SFTP</text>
+    <text x="995" y="454" fill="#1d1d1f" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="800">Git</text>
+  </g>
+
+  <path d="M320 370h85" stroke="#0071e3" stroke-width="6" stroke-linecap="round"/>
+  <path d="M875 370h85" stroke="#0071e3" stroke-width="6" stroke-linecap="round"/>
+  <rect x="350" y="585" width="580" height="46" rx="23" fill="#1f1f21"/>
+  <text x="401" y="615" fill="#f5f5f7" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">文件资产变成 Agent 可访问、可审计、可复用的工作区</text>
+</svg>
