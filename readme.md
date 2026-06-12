@@ -2,23 +2,9 @@
 
 `ai-agent-file-hub` 是面向 AI 智能体时代的统一文件、记忆与技能基础设施。当前代码提供 Go + Vue 3 文件中枢，可统一接入本地目录、OSS、S3-compatible 对象存储、SFTP 服务器和 Git 仓库，并通过浏览器、REST、OpenAPI 与 MCP 暴露给人类用户和 AI 智能体。
 
-![Agent File Hub 产品界面](docs/assets/product-preview.png)
-
-## 一句话安装
-
-把下面这句话发给 OpenClaw、Claude 或 Codex，智能体会读取安装技能，自动检查环境、选择安装方式、启动服务并验证访问地址。
-
-```text
-请帮我安装 AgentFileHub，安装技能: https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md
-```
-
-![AgentFileHub AI Agent 智能安装流程](docs/assets/readme-agent-skill-flow.svg)
-
 ## 下载与安装
 
 安装分为两种模式：服务器推荐 Docker 模式，本机体验和轻量部署可以直接下载对应系统二进制运行。
-
-![AgentFileHub 三种安装方式](docs/assets/readme-install-options.svg)
 
 ### 模式一：Docker 运行
 
@@ -26,7 +12,7 @@
 u=https://my.rongyiapi.com
 p=/ai-agent-file-hub/install.sh
 curl -fsSL "$u$p" -o install.sh
-bash install.sh
+AGENT_FILE_HUB_MODE=docker bash install.sh
 ```
 
 默认访问地址：`http://127.0.0.1:18787`
@@ -35,7 +21,8 @@ bash install.sh
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.0` | 要部署的 Release 版本 |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.1` | 要部署的 Release 版本；留空时读取 `version.json` |
+| `AGENT_FILE_HUB_MODE` | `auto` | `docker` 使用 Docker Compose，`direct` 下载本地二进制 |
 | `HOST_PORT` | `18787` | 映射到宿主机的端口 |
 | `AGENT_FILE_HUB_HOME` | `~/agent-file-hub` | 安装目录 |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
@@ -46,7 +33,7 @@ bash install.sh
 ```sh
 git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
 cd ai-agent-file-hub
-AGENT_FILE_HUB_VERSION=v1.0.0 HOST_PORT=18787 sh run.sh
+AGENT_FILE_HUB_VERSION=v1.0.1 HOST_PORT=18787 sh run.sh
 ```
 
 手动 Docker Run：
@@ -61,20 +48,27 @@ docker run -d \
   -e FILE_BROWSER_ROOT=/app/storage \
   -v agent_file_hub_data:/app/data \
   -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.0
+  duolabmeng/agent_file_hub:v1.0.1
+```
+
+更新 Docker 容器：
+
+```sh
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
+AGENT_FILE_HUB_MODE=docker bash install.sh
 ```
 
 ### 模式二：直接运行
 
-Linux x64 示例：
+macOS / Linux 自动识别架构并安装或更新本地二进制：
 
 ```sh
-curl -L -o agent_file_hub https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-linux-amd64
-chmod +x agent_file_hub
-PORT=18787 FILE_BROWSER_ROOT=./storage ./agent_file_hub
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
+AGENT_FILE_HUB_MODE=direct bash install.sh
+~/agent-file-hub/run-local.sh
 ```
 
-macOS 和 Windows 请在 Releases 下载对应架构文件运行。
+Windows 请在 Releases 下载对应架构文件运行。
 
 ### AI Agent 智能安装技能
 
@@ -356,8 +350,6 @@ Git 储存器用于把文件记忆和技能资产变成可追踪资产。
 - Workspace 二进制上传默认限制为 10 MB
 
 ## 技术架构
-
-![AgentFileHub 技术架构](docs/assets/readme-architecture.svg)
 
 ```text
 web/app

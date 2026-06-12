@@ -22,7 +22,7 @@
 v<web/app/package.json version>
 ```
 
-示例：`web/app/package.json` 为 `1.0.0` 时，tag 必须是 `v1.0.0`。
+示例：`web/app/package.json` 为 `1.0.1` 时，tag 必须是 `v1.0.1`。
 
 ## 需要的 Secrets
 
@@ -63,8 +63,8 @@ python3 -m json.tool /Users/ll/Desktop/2026/ai-agent-file-hub/docs/version.json 
 4. 创建并推送 tag：
 
    ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
+   git tag v1.0.1
+   git push origin v1.0.1
    ```
 
 5. GitHub Actions 自动执行 `.github/workflows/release.yml`。
@@ -114,7 +114,7 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 | 发版 SOP | `docs/release-sop.md` | `docs/release-sop.md` |
 | 当前版本 | tag / `web/app/package.json` | `docs/version.json`、官网页面、安装脚本、Docker 配置 |
 
-官网页面上的版本号、Release 链接、二进制下载链接、Docker 标签和页脚版本都必须随 tag 更新。
+官网页面上的版本号、Release 链接、二进制下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/version.json` 同时作为应用内检查更新和 `install.sh` 默认版本解析的 manifest。
 
 ## AI Agent 安装技能发版规则
 
@@ -145,8 +145,8 @@ https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md
 检查 Release：
 
 ```bash
-gh release view v1.0.0 --repo duolabmeng6/ll-filebrowser
-gh release view v1.0.0 --repo duolabmeng6/ai-agent-file-hub
+gh release view v1.0.1 --repo duolabmeng6/ll-filebrowser
+gh release view v1.0.1 --repo duolabmeng6/ai-agent-file-hub
 ```
 
 检查官网：
@@ -160,7 +160,7 @@ curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh | sed -n '1,40p
 检查 Docker：
 
 ```bash
-docker pull duolabmeng/agent_file_hub:v1.0.0
+docker pull duolabmeng/agent_file_hub:v1.0.1
 docker pull duolabmeng/agent_file_hub:latest
 ```
 
@@ -181,7 +181,7 @@ Release 上传失败：
 官网资料未同步：
 
 ```bash
-TAG_NAME=v1.0.0 \
+TAG_NAME=v1.0.1 \
 FILE_HUB_REPOSITORY=duolabmeng6/ai-agent-file-hub \
 SOURCE_REPOSITORY=duolabmeng6/ll-filebrowser \
 scripts/sync-file-hub-release-docs.sh /Users/ll/Desktop/2026/ai-agent-file-hub
@@ -192,7 +192,7 @@ scripts/sync-file-hub-release-docs.sh /Users/ll/Desktop/2026/ai-agent-file-hub
 ```bash
 cd /Users/ll/Desktop/2026/ai-agent-file-hub
 git add readme.md docs/index.html docs/version.json docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml .env.example Dockerfile
-git commit -m "docs: 同步 v1.0.0 官网资料"
+git commit -m "docs: 同步 v1.0.1 官网资料"
 git push
 ```
 

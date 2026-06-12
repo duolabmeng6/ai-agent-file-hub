@@ -63,13 +63,13 @@ Recommended for servers and long-running use.
 u=https://my.rongyiapi.com
 p=/ai-agent-file-hub/install.sh
 curl -fsSL "$u$p" -o install.sh
-bash install.sh
+AGENT_FILE_HUB_MODE=docker bash install.sh
 ```
 
 Custom port or version:
 
 ```bash
-AGENT_FILE_HUB_VERSION=v1.0.0 HOST_PORT=18787 bash install.sh
+AGENT_FILE_HUB_VERSION=v1.0.1 HOST_PORT=18787 AGENT_FILE_HUB_MODE=docker bash install.sh
 ```
 
 After install:
@@ -84,9 +84,8 @@ curl -I http://127.0.0.1:18787/
 Update:
 
 ```bash
-cd ~/agent-file-hub
-docker compose pull
-docker compose up -d
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
+AGENT_FILE_HUB_MODE=docker bash install.sh
 ```
 
 Restart and stop:
@@ -107,49 +106,59 @@ docker compose down
 Remove data only after explicit user approval:
 
 ```bash
-docker volume rm agent_file_hub_data agent_file_hub_storage
+docker volume rm agent_file_hub_data
 ```
 
 ## Direct Release Install
 
 Use release binaries when Docker is unavailable.
 
-Linux x64:
+Auto-detect macOS/Linux platform and install or update the local binary:
 
 ```bash
-curl -L -o agent_file_hub https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-linux-amd64
-chmod +x agent_file_hub
-PORT=18787 FILE_BROWSER_ROOT=./storage ./agent_file_hub
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
+AGENT_FILE_HUB_MODE=direct bash install.sh
+~/agent-file-hub/run-local.sh
+```
+
+Pin a specific version:
+
+```bash
+AGENT_FILE_HUB_VERSION=v1.0.1 AGENT_FILE_HUB_MODE=direct bash install.sh
+```
+
+Linux x64 asset:
+
+```text
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-linux-amd64
 ```
 
 Linux ARM64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-linux-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-linux-arm64
 ```
 
-macOS Apple Silicon:
+macOS Apple Silicon asset:
 
-```bash
-curl -L -o agent_file_hub https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-darwin-arm64
-chmod +x agent_file_hub
-PORT=18787 FILE_BROWSER_ROOT=./storage ./agent_file_hub
+```text
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-darwin-arm64
 ```
 
 macOS Intel asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-darwin-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-darwin-amd64
 ```
 
 Windows assets:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-windows-amd64.exe
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.0/agent_file_hub-windows-arm64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-windows-amd64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-windows-arm64.exe
 ```
 
-Direct-run data files are created under the process working directory by default. Keep the binary in a dedicated directory if the user wants predictable `data/`, `storage/`, and log paths.
+Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set.
 
 ## Source Build Install
 
@@ -213,7 +222,7 @@ lsof -nP -iTCP:18787 -sTCP:LISTEN
 Choose another port:
 
 ```bash
-HOST_PORT=18788 bash install.sh
+HOST_PORT=18788 AGENT_FILE_HUB_MODE=docker bash install.sh
 ```
 
 Docker missing:
