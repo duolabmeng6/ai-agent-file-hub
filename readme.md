@@ -4,7 +4,7 @@
 
 ## 下载与安装
 
-安装分为两种模式：服务器推荐 Docker 模式，本机体验和轻量部署可以直接下载对应系统二进制运行。
+安装分为三种使用路径：服务器推荐 Docker 模式；本机体验和轻量部署可以直接下载二进制；需要给 AI 技能或脚本调用时使用 `afile` CLI 模式。
 
 ### 模式一：Docker 运行
 
@@ -68,7 +68,39 @@ AGENT_FILE_HUB_MODE=direct bash install.sh
 ~/agent-file-hub/run-local.sh
 ```
 
+直接运行模式会安装服务端二进制 `agent_file_hub`；当前版本包含 CLI 资产时，会同时安装命令行工具 `afile`。
+
 Windows 请在 Releases 下载对应架构文件运行。
+
+### 模式三：CLI 启动与 Workspace 操作
+
+`afile` 面向本机终端、脚本和 AI 技能调用。推荐路径是先用 CLI 启动 Web 工作台，在浏览器里配置储存器并创建协作目录，然后用同一个 Workspace 访问码执行 MCP 或文件操作。
+
+启动 Web 工作台：
+
+```sh
+~/agent-file-hub/afile serve --host 127.0.0.1 --port 9000 --background --open
+~/agent-file-hub/afile status --json
+~/agent-file-hub/afile url
+```
+
+生成 MCP 客户端配置：
+
+```sh
+~/agent-file-hub/afile mcp config <workspace-code> --server http://127.0.0.1:9000 --json
+```
+
+Workspace 文件操作：
+
+```sh
+~/agent-file-hub/afile workspace ls <workspace-code> /
+~/agent-file-hub/afile workspace read <workspace-code> notes/todo.md
+~/agent-file-hub/afile workspace write <workspace-code> notes/todo.md --stdin
+~/agent-file-hub/afile workspace upload <workspace-code> ./local.pdf docs/local.pdf
+~/agent-file-hub/afile workspace download <workspace-code> docs/local.pdf --to ./local.pdf
+```
+
+Workspace 访问码在 Web 中创建共享目录并开启协作权限后获得。复杂储存器配置继续在 Web 中完成，CLI 负责启动入口、MCP 配置和 Workspace 文件操作。
 
 ### AI Agent 智能安装技能
 
@@ -103,6 +135,8 @@ Linux：
 | --- | --- |
 | `agent_file_hub-linux-amd64` | x64 服务器二进制，下载后 `chmod +x` 运行 |
 | `agent_file_hub-linux-arm64` | ARM64 服务器二进制，适合 ARM 云服务器和开发板 |
+| `afile-linux-amd64` | x64 CLI 二进制，支持启动 Web、MCP 配置和 Workspace 文件操作 |
+| `afile-linux-arm64` | ARM64 CLI 二进制 |
 
 Windows：
 
@@ -110,6 +144,8 @@ Windows：
 | --- | --- |
 | `agent_file_hub-windows-amd64.exe` | Windows x64 可执行文件 |
 | `agent_file_hub-windows-arm64.exe` | Windows ARM64 可执行文件 |
+| `afile-windows-amd64.exe` | Windows x64 CLI 二进制 |
+| `afile-windows-arm64.exe` | Windows ARM64 CLI 二进制 |
 
 macOS：
 
@@ -117,6 +153,8 @@ macOS：
 | --- | --- |
 | `agent_file_hub-darwin-amd64` | Intel Mac 二进制，下载后 `chmod +x` 运行 |
 | `agent_file_hub-darwin-arm64` | Apple Silicon 二进制，下载后 `chmod +x` 运行 |
+| `afile-darwin-amd64` | Intel Mac CLI 二进制 |
+| `afile-darwin-arm64` | Apple Silicon CLI 二进制 |
 
 一句话定位：
 
@@ -399,6 +437,24 @@ http://127.0.0.1:9000
 
 首次访问会进入初始化页面，设置管理员用户名和密码后进入系统。
 
+CLI 启动 Web 工作台：
+
+```bash
+go run ./cmd/afile serve --host 127.0.0.1 --port 9000 --background --open
+```
+
+CLI 复用 Workspace / MCP 能力：
+
+```bash
+go run ./cmd/afile mcp config <访问码>
+go run ./cmd/afile workspace ls <访问码> /
+go run ./cmd/afile workspace read <访问码> notes/todo.md
+go run ./cmd/afile workspace write <访问码> notes/todo.md --stdin
+go run ./cmd/afile workspace upload <访问码> ./local.pdf docs/local.pdf
+```
+
+Workspace 访问码在 Web 中创建共享目录并选择协作权限后获得。CLI 只负责启动入口和 Workspace 文件操作，高级储存器配置继续在 Web 中完成。
+
 前后端开发模式：
 
 ```bash
@@ -419,6 +475,12 @@ npm run build
 
 ```bash
 make build
+```
+
+构建 CLI 二进制：
+
+```bash
+make build-cli
 ```
 
 构建多平台 Linux 发行目录：

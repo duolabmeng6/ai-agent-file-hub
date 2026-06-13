@@ -20,11 +20,13 @@ Default recommendation: use Docker Compose for servers and long-running deployme
 - Public installer: `https://my.rongyiapi.com/ai-agent-file-hub/install.sh`
 - Public skill: `https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md`
 - Release SOP: `https://my.rongyiapi.com/ai-agent-file-hub/release-sop.md`
+- CLI binary: `afile`
 - Default external port: `18787`
 - Docker container port: `9000`
 - Docker install directory: `~/agent-file-hub`
 - Docker storage directory: `~/agent-file-hub/storage`
 - Direct-run storage directory: `./storage`
+- Direct-run CLI path: `~/agent-file-hub/afile`
 - User skill install path: `~/.agents/skills/agent-file-hub/SKILL.md`
 
 First browser access should open the setup page if no admin account exists. Ask the user to create the administrator account in the browser unless they intentionally set `FILE_BROWSER_AUTH_PASSWORD` before first start.
@@ -158,7 +160,32 @@ https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_
 https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.1/agent_file_hub-windows-arm64.exe
 ```
 
-Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set.
+Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the server binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set. The direct installer also installs `~/agent-file-hub/afile` for CLI mode.
+
+## CLI Mode
+
+Use CLI mode when the user wants AgentFileHub to be started from an AI skill, script, or terminal session.
+
+Recommended path:
+
+1. Start the Web workspace:
+   ```bash
+   ~/agent-file-hub/afile serve --host 127.0.0.1 --port 9000 --background --open
+   ~/agent-file-hub/afile status --json
+   ```
+2. Ask the user to create the admin account in the browser if the setup page appears.
+3. In the Web UI, create or select a storage, then create a shared folder with collaboration permissions.
+4. Copy the Workspace code from the Web UI.
+5. Generate MCP config or run file operations:
+   ```bash
+   ~/agent-file-hub/afile mcp config <workspace-code> --server http://127.0.0.1:9000 --json
+   ~/agent-file-hub/afile workspace ls <workspace-code> /
+   ~/agent-file-hub/afile workspace read <workspace-code> notes/todo.md
+   ~/agent-file-hub/afile workspace write <workspace-code> notes/todo.md --stdin
+   ~/agent-file-hub/afile workspace upload <workspace-code> ./local.pdf docs/local.pdf
+   ```
+
+Keep advanced storage setup in the Web UI. Use CLI for service control, MCP configuration, and Workspace file operations.
 
 ## Source Build Install
 
@@ -175,6 +202,13 @@ For the product source repository, build with the Go/Vue source project:
 cd /Users/ll/Desktop/2026/ll-filebrowser
 make build
 PORT=18787 FILE_BROWSER_ROOT=./storage ./dist/ll-filebrowser
+```
+
+Build the CLI from source:
+
+```bash
+make build-cli
+./dist/afile serve --host 127.0.0.1 --port 9000 --background --open
 ```
 
 If dependencies or sibling repositories are missing, prefer release binaries or Docker.

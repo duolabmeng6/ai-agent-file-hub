@@ -7,7 +7,7 @@
 一次 tag 发版必须同时完成：
 
 - 当前源码仓库 Release 生成多平台二进制产物。
-- `duolabmeng6/ai-agent-file-hub` Release 使用同一个 tag，并上传同名二进制产物。
+- `duolabmeng6/ai-agent-file-hub` Release 使用同一个 tag，并上传同名服务端二进制和 `afile` CLI 二进制产物。
 - Docker Hub 镜像 `duolabmeng/agent_file_hub` 使用同一个 tag 构建和推送。
 - 官网仓库资料随 tag 同步：`readme.md`、`docs/index.html`、`docs/version.json`、`docs/install.sh`、`run.sh`、`docker-compose.yaml`、`.env.example`、公开 Skill 和本 SOP。
 - GitHub Pages 在官网仓库 `main` 更新后自动部署。
@@ -75,7 +75,7 @@ Release workflow 执行顺序：
 
 1. 校验 tag 与 `web/app/package.json` 版本一致。
 2. 构建前端并嵌入 Go 二进制。
-3. 构建 `agent_file_hub-*` 多平台产物。
+3. 构建 `agent_file_hub-*` 服务端多平台产物和 `afile-*` CLI 多平台产物。
 4. 发布当前源码仓库 Release。
 5. 发布 `duolabmeng6/ai-agent-file-hub` 同 tag Release。
 6. 构建并推送 Docker Hub 镜像。
@@ -114,7 +114,7 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 | 发版 SOP | `docs/release-sop.md` | `docs/release-sop.md` |
 | 当前版本 | tag / `web/app/package.json` | `docs/version.json`、官网页面、安装脚本、Docker 配置 |
 
-官网页面上的版本号、Release 链接、二进制下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/version.json` 同时作为应用内检查更新和 `install.sh` 默认版本解析的 manifest。
+官网页面上的版本号、Release 链接、服务端二进制下载链接、CLI 下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/version.json` 同时作为应用内检查更新、CLI 下载入口和 `install.sh` 默认版本解析的 manifest。
 
 ## AI Agent 安装技能发版规则
 
@@ -169,6 +169,7 @@ docker pull duolabmeng/agent_file_hub:latest
 - 官网首页显示当前版本。
 - 下载链接指向当前 tag。
 - 智能安装技能区块显示一句话安装入口和公开 Skill 地址。
+- CLI 模式区块显示 `afile serve/status/mcp/workspace` 的最小使用路径，且下载入口包含 `afile-*` 资产。
 - GitHub 图标跳转到 `https://github.com/duolabmeng6/ai-agent-file-hub`。
 
 ## 失败恢复

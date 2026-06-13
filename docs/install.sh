@@ -8,6 +8,7 @@ MODE="${AGENT_FILE_HUB_MODE:-auto}"
 HOST_PORT="${HOST_PORT:-18787}"
 INSTALL_DIR="${AGENT_FILE_HUB_HOME:-$HOME/agent-file-hub}"
 APP_NAME="agent_file_hub"
+CLI_APP_NAME="afile"
 IMAGE_REPOSITORY="duolabmeng/agent_file_hub"
 
 command_exists() {
@@ -127,15 +128,31 @@ EOF
 install_direct() {
   platform="$(detect_asset_platform)"
   asset_url="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}/${APP_NAME}-${platform}"
+  cli_asset_url="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}/${CLI_APP_NAME}-${platform}"
   mkdir -p "$INSTALL_DIR/storage" "$INSTALL_DIR/data"
   tmp_file="$INSTALL_DIR/.${APP_NAME}.${VERSION}.$$"
+  cli_tmp_file="$INSTALL_DIR/.${CLI_APP_NAME}.${VERSION}.$$"
 
   download_file "$asset_url" "$tmp_file"
   chmod +x "$tmp_file"
+  cli_available=0
+  if download_file "$cli_asset_url" "$cli_tmp_file"; then
+    chmod +x "$cli_tmp_file"
+    cli_available=1
+  else
+    rm -f "$cli_tmp_file"
+    echo "CLI asset is not available for $VERSION; continuing without afile." >&2
+  fi
   if [ -f "$INSTALL_DIR/$APP_NAME" ]; then
     cp "$INSTALL_DIR/$APP_NAME" "$INSTALL_DIR/$APP_NAME.previous" 2>/dev/null || true
   fi
+  if [ "$cli_available" = "1" ] && [ -f "$INSTALL_DIR/$CLI_APP_NAME" ]; then
+    cp "$INSTALL_DIR/$CLI_APP_NAME" "$INSTALL_DIR/$CLI_APP_NAME.previous" 2>/dev/null || true
+  fi
   mv "$tmp_file" "$INSTALL_DIR/$APP_NAME"
+  if [ "$cli_available" = "1" ]; then
+    mv "$cli_tmp_file" "$INSTALL_DIR/$CLI_APP_NAME"
+  fi
 
   cat > "$INSTALL_DIR/run-local.sh" <<'EOF'
 #!/usr/bin/env sh
@@ -153,6 +170,9 @@ EOF
   echo "Version: $VERSION"
   echo "Install dir: $INSTALL_DIR"
   echo "Run: $INSTALL_DIR/run-local.sh"
+  if [ "$cli_available" = "1" ]; then
+    echo "CLI: $INSTALL_DIR/afile"
+  fi
 }
 
 if [ -z "$VERSION" ]; then
