@@ -83,7 +83,7 @@ install_docker() {
     exit 1
   fi
 
-  mkdir -p "$INSTALL_DIR/storage"
+  mkdir -p "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
   cd "$INSTALL_DIR"
 
   cat > docker-compose.yaml <<EOF
@@ -102,7 +102,7 @@ services:
     ports:
       - "${HOST_PORT}:9000"
     volumes:
-      - agent_file_hub_data:/app/data
+      - ./data:/app/data
       - ./storage:/app/storage
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/ >/dev/null || exit 1"]
@@ -111,8 +111,6 @@ services:
       start_period: 20s
       retries: 3
 
-volumes:
-  agent_file_hub_data:
 EOF
 
   docker compose pull
