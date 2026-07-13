@@ -1,11 +1,11 @@
 services:
   agent-file-hub:
-    image: duolabmeng/agent_file_hub:${AGENT_FILE_HUB_VERSION:-v1.0.2}
+    image: duolabmeng/agent_file_hub:${AGENT_FILE_HUB_VERSION:-v1.0.3}
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        VERSION: ${AGENT_FILE_HUB_VERSION:-v1.0.2}
+        VERSION: ${AGENT_FILE_HUB_VERSION:-v1.0.3}
     container_name: agent_file_hub
     restart: unless-stopped
     environment:

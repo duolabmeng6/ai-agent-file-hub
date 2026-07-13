@@ -83,7 +83,10 @@ install_docker() {
     exit 1
   fi
 
+  data_group_id="$(id -g)"
   mkdir -p "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
+  chgrp "$data_group_id" "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
+  chmod 2770 "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
   cd "$INSTALL_DIR"
 
   cat > docker-compose.yaml <<EOF
@@ -92,6 +95,8 @@ services:
     image: ${IMAGE_REPOSITORY}:${VERSION}
     container_name: agent_file_hub
     restart: unless-stopped
+    group_add:
+      - "${data_group_id}"
     environment:
       PORT: 9000
       GIN_MODE: release

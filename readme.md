@@ -21,7 +21,7 @@ AGENT_FILE_HUB_MODE=docker bash install.sh
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.2` | 要部署的 Release 版本；留空时读取 `version.json` |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.3` | 要部署的 Release 版本；留空时读取 `version.json` |
 | `AGENT_FILE_HUB_MODE` | `auto` | `docker` 使用 Docker Compose，`direct` 下载本地二进制 |
 | `HOST_PORT` | `18787` | 映射到宿主机的端口 |
 | `AGENT_FILE_HUB_HOME` | `~/agent-file-hub` | 安装目录 |
@@ -33,23 +33,27 @@ AGENT_FILE_HUB_MODE=docker bash install.sh
 ```sh
 git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
 cd ai-agent-file-hub
-AGENT_FILE_HUB_VERSION=v1.0.2 HOST_PORT=18787 sh run.sh
+AGENT_FILE_HUB_VERSION=v1.0.3 HOST_PORT=18787 sh run.sh
 ```
 
 手动 Docker Run：
 
 ```sh
 mkdir -p data storage
+data_group_id="$(id -g)"
+chgrp "$data_group_id" data storage
+chmod 2770 data storage
 docker run -d \
   --name agent_file_hub \
   --restart unless-stopped \
+  --group-add "$data_group_id" \
   -p 18787:9000 \
   -e PORT=9000 \
   -e GIN_MODE=release \
   -e FILE_BROWSER_ROOT=/app/storage \
   -v "$PWD/data:/app/data" \
   -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.2
+  duolabmeng/agent_file_hub:v1.0.3
 ```
 
 更新 Docker 容器：

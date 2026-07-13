@@ -3,7 +3,7 @@ set -eu
 
 cd "$(dirname "$0")"
 
-VERSION="${AGENT_FILE_HUB_VERSION:-v1.0.2}"
+VERSION="${AGENT_FILE_HUB_VERSION:-v1.0.3}"
 HOST_PORT="${HOST_PORT:-18787}"
 IMAGE="duolabmeng/agent_file_hub:${VERSION}"
 
