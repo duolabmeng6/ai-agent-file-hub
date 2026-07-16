@@ -310,6 +310,11 @@
         background: #343437;
       }
 
+      .copy-button:disabled {
+        cursor: wait;
+        opacity: 0.58;
+      }
+
       .copy-button.blue {
         background: var(--blue);
       }
@@ -594,6 +599,39 @@
         white-space: pre-wrap;
         overflow-wrap: anywhere;
         word-break: break-word;
+      }
+
+      .compose-text {
+        max-height: 310px;
+        border-radius: 0 0 7px 7px;
+        white-space: pre;
+        word-break: normal;
+      }
+
+      .compose-details {
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 7px;
+        background: #171719;
+      }
+
+      .compose-details summary {
+        padding: 12px 15px;
+        color: #c7c7cc;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .compose-details[open] summary {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .compose-start {
+        display: grid;
+        gap: 10px;
+        padding-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
       }
 
       .deploy-facts {
@@ -1032,16 +1070,33 @@
             <article class="install-option docker-option">
               <div class="install-copy">
                 <span class="tag green">推荐 · 服务器</span>
-                <h3>Docker 一键部署</h3>
-                <p>一条命令创建目录、生成 Compose 配置、拉取镜像并后台运行。</p>
+                <h3>Docker Compose 手动部署</h3>
+                <p>在线读取官方 docker-compose.yaml；复制保存后直接启动。自动安装器也下载同一个文件，不再在脚本里生成配置。</p>
               </div>
 
               <div class="command-panel dark">
                 <div class="command-top">
-                  <span class="command-label">安装命令</span>
-                  <button class="copy-button" data-copy="docker-install-command">复制命令</button>
+                  <span class="command-label">docker-compose.yaml</span>
+                  <div class="mode-actions">
+                    <button class="copy-button" data-copy="docker-compose-content" data-copy-raw disabled>加载中</button>
+                    <a class="text-link" href="./docker-compose.yaml" download>下载文件</a>
+                  </div>
                 </div>
-                <p class="command-text" id="docker-install-command">curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && bash install.sh</p>
+                <details class="compose-details">
+                  <summary>查看 docker-compose.yaml 内容</summary>
+                  <pre class="command-text compose-text" id="docker-compose-content" aria-live="polite">正在读取官方 Compose 文件…</pre>
+                </details>
+                <div class="compose-start">
+                  <div class="command-top">
+                    <span class="command-label">保存文件后启动</span>
+                    <button class="copy-button" data-copy="docker-compose-start-command">复制启动命令</button>
+                  </div>
+                  <p class="command-text" id="docker-compose-start-command">mkdir -p data storage
+data_group_id="$(id -g)"
+chgrp "$data_group_id" data storage &amp;&amp; chmod 2770 data storage
+printf 'DATA_GROUP_ID=%s\n' "$data_group_id" &gt; .env
+docker compose up -d</p>
+                </div>
               </div>
 
               <div class="deploy-facts" aria-label="Docker 部署信息">
@@ -1059,7 +1114,8 @@
                 </div>
               </div>
               <div class="mode-actions">
-                <a class="text-link" href="./install.sh">查看 install.sh</a>
+                <a class="text-link" href="./docker-compose.yaml">查看原文件</a>
+                <a class="text-link" href="./install.sh">可选：自动安装脚本</a>
                 <a class="text-link" href="https://hub.docker.com/r/duolabmeng/agent_file_hub">Docker Hub</a>
               </div>
             </article>
@@ -1165,7 +1221,7 @@
               <h3>Docker</h3>
               <p>云服务器、私有服务器和长期部署环境。</p>
               <div class="download-actions">
-                <button class="copy-button blue" data-copy="docker-install-command">复制安装命令</button>
+                <button class="copy-button blue" data-copy="docker-compose-content" data-copy-raw disabled>加载 Compose</button>
                 <a class="text-link" href="https://hub.docker.com/r/duolabmeng/agent_file_hub">Docker Hub</a>
               </div>
             </article>
@@ -1245,14 +1301,45 @@
     </footer>
 
     <script>
+      const composeTarget = document.getElementById("docker-compose-content");
+      const composeButtons = document.querySelectorAll('[data-copy="docker-compose-content"]');
+
+      fetch("./docker-compose.yaml", { cache: "no-cache" })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return response.text();
+        })
+        .then((content) => {
+          composeTarget.textContent = content.trimEnd();
+          composeButtons.forEach((button) => {
+            button.disabled = false;
+            button.textContent = "复制 Compose";
+          });
+        })
+        .catch((error) => {
+          composeTarget.textContent = `Compose 文件加载失败：${error.message}`;
+          composeButtons.forEach((button) => {
+            button.disabled = true;
+            button.textContent = "加载失败";
+          });
+        });
+
       document.querySelectorAll("[data-copy]").forEach((button) => {
         button.addEventListener("click", async () => {
           const target = document.getElementById(button.dataset.copy);
           if (!target) return;
-          const text = target.textContent.replace(/\s+/g, " ").trim();
-          await navigator.clipboard.writeText(text);
+          const text = button.hasAttribute("data-copy-raw")
+            ? `${target.textContent.trimEnd()}\n`
+            : target.textContent.replace(/\s+/g, " ").trim();
           const oldText = button.textContent;
-          button.textContent = "已复制";
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = "已复制";
+          } catch (error) {
+            button.textContent = "复制失败";
+          }
           setTimeout(() => {
             button.textContent = oldText;
           }, 1600);

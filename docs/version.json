@@ -4,6 +4,7 @@
   "homepage_url": "https://my.rongyiapi.com/ai-agent-file-hub/",
   "repository_url": "https://github.com/duolabmeng6/ai-agent-file-hub",
   "install_script_url": "https://my.rongyiapi.com/ai-agent-file-hub/install.sh",
+  "docker_compose_url": "https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml",
   "skill_url": "https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md",
   "docker_image": "duolabmeng/agent_file_hub:v1.0.3",
   "docker_update_command": "curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && AGENT_FILE_HUB_MODE=docker bash install.sh",

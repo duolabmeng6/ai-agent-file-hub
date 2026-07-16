@@ -9,7 +9,7 @@
 - 当前源码仓库 Release 生成多平台二进制产物。
 - `duolabmeng6/ai-agent-file-hub` Release 使用同一个 tag，并上传同名服务端二进制和 `afile` CLI 二进制产物。
 - Docker Hub 镜像 `duolabmeng/agent_file_hub` 使用同一个 tag 构建和推送。
-- 官网仓库资料随 tag 同步：`readme.md`、`docs/index.html`、`docs/version.json`、`docs/install.sh`、`run.sh`、`docker-compose.yaml`、`.env.example`、公开 Skill 和本 SOP。
+- 官网仓库资料随 tag 同步：`readme.md`、`docs/index.html`、`docs/version.json`、`docs/docker-compose.yaml`、`docs/install.sh`、`run.sh`、`docker-compose.yaml`、`.env.example`、公开 Skill 和本 SOP。
 - GitHub Pages 在官网仓库 `main` 更新后自动部署。
 
 ## 版本来源
@@ -95,6 +95,7 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 - `readme.md`
 - `docs/index.html`
 - `docs/version.json`
+- `docs/docker-compose.yaml`
 - `docs/install.sh`
 - `docs/skills/agent-file-hub/SKILL.md`
 - `docs/release-sop.md`
@@ -112,9 +113,9 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 | 产品介绍 | `ll-filebrowser/readme.md` | `ai-agent-file-hub/readme.md` |
 | 用户安装 Skill | `.agents/skills/agent-file-hub/SKILL.md` | `docs/skills/agent-file-hub/SKILL.md` |
 | 发版 SOP | `docs/release-sop.md` | `docs/release-sop.md` |
-| 当前版本 | tag / `web/app/package.json` | `docs/version.json`、官网页面、安装脚本、Docker 配置 |
+| 当前版本 | tag / `web/app/package.json` | `docs/version.json`、官网页面、安装脚本、公开 Compose、Docker 配置 |
 
-官网页面上的版本号、Release 链接、服务端二进制下载链接、CLI 下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/version.json` 同时作为应用内检查更新、CLI 下载入口和 `install.sh` 默认版本解析的 manifest。
+官网页面上的版本号、Release 链接、服务端二进制下载链接、CLI 下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/docker-compose.yaml` 是官网手动 Docker 部署与安装脚本共同读取的公开配置，禁止再在 `install.sh` 内维护第二份 Compose 内容。`docs/version.json` 同时作为应用内检查更新、CLI 下载入口和 `install.sh` 默认版本解析的 manifest。
 
 ## AI Agent 安装技能发版规则
 
@@ -153,6 +154,7 @@ gh release view v1.0.1 --repo duolabmeng6/ai-agent-file-hub
 
 ```bash
 curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/version.json | python3 -m json.tool
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml | docker compose -f - config >/dev/null
 curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md | sed -n '1,20p'
 curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh | sed -n '1,40p'
 ```
@@ -168,6 +170,7 @@ docker pull duolabmeng/agent_file_hub:latest
 
 - 官网首页显示当前版本。
 - 下载链接指向当前 tag。
+- Docker 安装区能够读取、展示、复制和下载公开 `docker-compose.yaml`。
 - 智能安装技能区块显示一句话安装入口和公开 Skill 地址。
 - CLI 模式区块显示 `afile serve/status/mcp/workspace` 的最小使用路径，且下载入口包含 `afile-*` 资产。
 - GitHub 图标跳转到 `https://github.com/duolabmeng6/ai-agent-file-hub`。
@@ -192,7 +195,7 @@ scripts/sync-file-hub-release-docs.sh /Users/ll/Desktop/2026/ai-agent-file-hub
 
 ```bash
 cd /Users/ll/Desktop/2026/ai-agent-file-hub
-git add readme.md docs/index.html docs/version.json docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml .env.example Dockerfile
+git add readme.md docs/index.html docs/version.json docs/docker-compose.yaml docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml .env.example Dockerfile
 git commit -m "docs: 同步 v1.0.1 官网资料"
 git push
 ```

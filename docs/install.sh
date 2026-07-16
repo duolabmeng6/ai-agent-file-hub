@@ -3,13 +3,13 @@ set -eu
 
 PUBLIC_BASE_URL="${AGENT_FILE_HUB_PUBLIC_BASE_URL:-https://my.rongyiapi.com/ai-agent-file-hub}"
 MANIFEST_URL="${AGENT_FILE_HUB_MANIFEST_URL:-${PUBLIC_BASE_URL}/version.json}"
+COMPOSE_URL="${AGENT_FILE_HUB_COMPOSE_URL:-${PUBLIC_BASE_URL}/docker-compose.yaml}"
 VERSION="${AGENT_FILE_HUB_VERSION:-}"
 MODE="${AGENT_FILE_HUB_MODE:-auto}"
 HOST_PORT="${HOST_PORT:-18787}"
 INSTALL_DIR="${AGENT_FILE_HUB_HOME:-$HOME/agent-file-hub}"
 APP_NAME="agent_file_hub"
 CLI_APP_NAME="afile"
-IMAGE_REPOSITORY="duolabmeng/agent_file_hub"
 
 command_exists() {
   command -v "$1" >/dev/null 2>&1
@@ -42,6 +42,34 @@ download_file() {
   fi
   echo "curl or wget is required to download $url" >&2
   exit 1
+}
+
+set_env_value() {
+  file="$1"
+  key="$2"
+  value="$3"
+  tmp_file="${file}.tmp.$$"
+
+  if [ -f "$file" ]; then
+    awk -v key="$key" -v value="$value" '
+      BEGIN { found = 0 }
+      index($0, key "=") == 1 {
+        if (!found) {
+          print key "=" value
+          found = 1
+        }
+        next
+      }
+      { print }
+      END {
+        if (!found) print key "=" value
+      }
+    ' "$file" > "$tmp_file"
+  else
+    printf '%s=%s\n' "$key" "$value" > "$tmp_file"
+  fi
+
+  mv "$tmp_file" "$file"
 }
 
 latest_version() {
@@ -89,34 +117,23 @@ install_docker() {
   chmod 2770 "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
   cd "$INSTALL_DIR"
 
-  cat > docker-compose.yaml <<EOF
-services:
-  agent-file-hub:
-    image: ${IMAGE_REPOSITORY}:${VERSION}
-    container_name: agent_file_hub
-    restart: unless-stopped
-    group_add:
-      - "${data_group_id}"
-    environment:
-      PORT: 9000
-      GIN_MODE: release
-      TZ: \${TZ:-Asia/Shanghai}
-      FILE_BROWSER_ROOT: /app/storage
-      FILE_BROWSER_AUTH_USERNAME: \${FILE_BROWSER_AUTH_USERNAME:-admin}
-      FILE_BROWSER_AUTH_PASSWORD: \${FILE_BROWSER_AUTH_PASSWORD:-}
-    ports:
-      - "${HOST_PORT}:9000"
-    volumes:
-      - ./data:/app/data
-      - ./storage:/app/storage
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/ >/dev/null || exit 1"]
-      interval: 30s
-      timeout: 5s
-      start_period: 20s
-      retries: 3
+  compose_tmp="$INSTALL_DIR/.docker-compose.yaml.$$"
+  if download_file "$COMPOSE_URL" "$compose_tmp"; then
+    if ! docker compose -f "$compose_tmp" config >/dev/null; then
+      rm -f "$compose_tmp"
+      echo "Invalid Docker Compose file downloaded from $COMPOSE_URL" >&2
+      exit 1
+    fi
+    mv "$compose_tmp" "$INSTALL_DIR/docker-compose.yaml"
+  else
+    rm -f "$compose_tmp"
+    echo "Cannot download Docker Compose file from $COMPOSE_URL" >&2
+    exit 1
+  fi
 
-EOF
+  set_env_value "$INSTALL_DIR/.env" AGENT_FILE_HUB_VERSION "$VERSION"
+  set_env_value "$INSTALL_DIR/.env" HOST_PORT "$HOST_PORT"
+  set_env_value "$INSTALL_DIR/.env" DATA_GROUP_ID "$data_group_id"
 
   docker compose pull
   docker compose up -d

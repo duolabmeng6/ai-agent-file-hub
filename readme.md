@@ -8,33 +8,46 @@
 
 ### 模式一：Docker 运行
 
+官网公开提供可直接查看、复制和下载的 Compose 文件：
+
+```text
+https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml
+```
+
+手动部署：
+
 ```sh
-u=https://my.rongyiapi.com
-p=/ai-agent-file-hub/install.sh
-curl -fsSL "$u$p" -o install.sh
-AGENT_FILE_HUB_MODE=docker bash install.sh
+install_dir="$HOME/agent-file-hub"
+mkdir -p "$install_dir/data" "$install_dir/storage"
+cd "$install_dir"
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml -o docker-compose.yaml
+data_group_id="$(id -g)"
+chgrp "$data_group_id" data storage
+chmod 2770 data storage
+printf 'AGENT_FILE_HUB_VERSION=%s\nHOST_PORT=%s\nDATA_GROUP_ID=%s\n' 'v1.0.3' '18787' "$data_group_id" > .env
+docker compose up -d
 ```
 
 默认访问地址：`http://127.0.0.1:18787`
+
+自动安装脚本是可选入口。Docker 模式会下载上面的公开 Compose 文件，不再在脚本里生成 YAML：
+
+```sh
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
+AGENT_FILE_HUB_MODE=docker bash install.sh
+```
 
 常用环境变量：
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `AGENT_FILE_HUB_VERSION` | `v1.0.3` | 要部署的 Release 版本；留空时读取 `version.json` |
-| `AGENT_FILE_HUB_MODE` | `auto` | `docker` 使用 Docker Compose，`direct` 下载本地二进制 |
+| `AGENT_FILE_HUB_MODE` | `auto` | 安装脚本使用；`docker` 使用 Docker Compose，`direct` 下载本地二进制 |
 | `HOST_PORT` | `18787` | 映射到宿主机的端口 |
 | `AGENT_FILE_HUB_HOME` | `~/agent-file-hub` | 安装目录 |
+| `DATA_GROUP_ID` | 当前用户组 ID | 允许非 root 容器写入宿主机数据目录 |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
 | `FILE_BROWSER_AUTH_PASSWORD` | 空 | 初始化管理员密码，留空时进入页面初始化 |
-
-手动 Docker Compose：
-
-```sh
-git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
-cd ai-agent-file-hub
-AGENT_FILE_HUB_VERSION=v1.0.3 HOST_PORT=18787 sh run.sh
-```
 
 手动 Docker Run：
 
