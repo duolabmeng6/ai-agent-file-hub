@@ -1,4 +1,4 @@
-# AI智能体文件中枢
+# AI 智能体文件中枢
 
 `ai-agent-file-hub` 是面向 AI 智能体时代的统一文件、记忆与技能基础设施。当前代码提供 Go + Vue 3 文件中枢，可统一接入本地目录、OSS、S3-compatible 对象存储、SFTP 服务器和 Git 仓库，并通过浏览器、REST、OpenAPI 与 MCP 暴露给人类用户和 AI 智能体。
 
@@ -18,13 +18,9 @@ https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml
 
 ```sh
 install_dir="$HOME/agent-file-hub"
-mkdir -p "$install_dir/data" "$install_dir/storage"
+mkdir -p "$install_dir"
 cd "$install_dir"
 curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml -o docker-compose.yaml
-data_group_id="$(id -g)"
-chgrp "$data_group_id" data storage
-chmod 2770 data storage
-printf 'AGENT_FILE_HUB_VERSION=%s\nHOST_PORT=%s\nDATA_GROUP_ID=%s\n' 'v1.0.3' '18787' "$data_group_id" > .env
 docker compose up -d
 ```
 
@@ -33,47 +29,40 @@ docker compose up -d
 自动安装脚本是可选入口。Docker 模式会下载上面的公开 Compose 文件，不再在脚本里生成 YAML：
 
 ```sh
-curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
-AGENT_FILE_HUB_MODE=docker bash install.sh
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && sudo sh install.sh docker
 ```
 
 常用环境变量：
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.3` | 要部署的 Release 版本；留空时读取 `version.json` |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.4` | 仅直接运行模式使用；指定要下载的 Release 版本 |
 | `AGENT_FILE_HUB_MODE` | `auto` | 安装脚本使用；`docker` 使用 Docker Compose，`direct` 下载本地二进制 |
-| `HOST_PORT` | `18787` | 映射到宿主机的端口 |
-| `AGENT_FILE_HUB_HOME` | `~/agent-file-hub` | 安装目录 |
-| `DATA_GROUP_ID` | 当前用户组 ID | 允许非 root 容器写入宿主机数据目录 |
+| `AGENT_FILE_HUB_HOME` | 自动选择 | 高级覆盖；Docker 默认 `/opt/stacks/agent-file-hub`，直接运行默认 `~/agent-file-hub` |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
 | `FILE_BROWSER_AUTH_PASSWORD` | 空 | 初始化管理员密码，留空时进入页面初始化 |
 
 手动 Docker Run：
 
 ```sh
-mkdir -p data storage
-data_group_id="$(id -g)"
-chgrp "$data_group_id" data storage
-chmod 2770 data storage
 docker run -d \
   --name agent_file_hub \
   --restart unless-stopped \
-  --group-add "$data_group_id" \
+  --user 0:0 \
+  --security-opt no-new-privileges:true \
   -p 18787:9000 \
   -e PORT=9000 \
   -e GIN_MODE=release \
   -e FILE_BROWSER_ROOT=/app/storage \
   -v "$PWD/data:/app/data" \
   -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.3
+  duolabmeng/agent_file_hub:v1.0.4
 ```
 
 更新 Docker 容器：
 
 ```sh
-curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
-AGENT_FILE_HUB_MODE=docker bash install.sh
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && sudo sh install.sh docker
 ```
 
 ### 模式二：直接运行
@@ -176,7 +165,7 @@ macOS：
 
 一句话定位：
 
-> AI Agent File Hub：面向智能体时代的统一文件、记忆与技能基础设施。
+> Agent File Hub：面向智能体时代的统一文件、记忆与技能基础设施。
 
 ## 产品愿景
 
@@ -588,6 +577,9 @@ FILE_BROWSER_GITHUB_CLI_PATH=/path/to/gh
 
 - `GET /api/storages`
 - `POST /api/storages`
+- `GET /api/storages/export`
+- `POST /api/storages/import/preview`
+- `POST /api/storages/import`
 - `GET /api/storages/:id`
 - `PUT /api/storages/:id`
 - `PATCH /api/storages/:id`

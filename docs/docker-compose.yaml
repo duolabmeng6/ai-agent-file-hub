@@ -1,6 +1,6 @@
 services:
   agent-file-hub:
-    image: duolabmeng/agent_file_hub:${AGENT_FILE_HUB_VERSION:-v1.0.3}
+    image: duolabmeng/agent_file_hub:${AGENT_FILE_HUB_VERSION:-v1.0.4}
     container_name: agent_file_hub
     restart: unless-stopped
     group_add:

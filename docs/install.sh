@@ -5,9 +5,8 @@ PUBLIC_BASE_URL="${AGENT_FILE_HUB_PUBLIC_BASE_URL:-https://my.rongyiapi.com/ai-a
 MANIFEST_URL="${AGENT_FILE_HUB_MANIFEST_URL:-${PUBLIC_BASE_URL}/version.json}"
 COMPOSE_URL="${AGENT_FILE_HUB_COMPOSE_URL:-${PUBLIC_BASE_URL}/docker-compose.yaml}"
 VERSION="${AGENT_FILE_HUB_VERSION:-}"
-MODE="${AGENT_FILE_HUB_MODE:-auto}"
-HOST_PORT="${HOST_PORT:-18787}"
-INSTALL_DIR="${AGENT_FILE_HUB_HOME:-$HOME/agent-file-hub}"
+MODE="${1:-${AGENT_FILE_HUB_MODE:-auto}}"
+INSTALL_DIR_OVERRIDE="${AGENT_FILE_HUB_HOME:-}"
 APP_NAME="agent_file_hub"
 CLI_APP_NAME="afile"
 
@@ -42,34 +41,6 @@ download_file() {
   fi
   echo "curl or wget is required to download $url" >&2
   exit 1
-}
-
-set_env_value() {
-  file="$1"
-  key="$2"
-  value="$3"
-  tmp_file="${file}.tmp.$$"
-
-  if [ -f "$file" ]; then
-    awk -v key="$key" -v value="$value" '
-      BEGIN { found = 0 }
-      index($0, key "=") == 1 {
-        if (!found) {
-          print key "=" value
-          found = 1
-        }
-        next
-      }
-      { print }
-      END {
-        if (!found) print key "=" value
-      }
-    ' "$file" > "$tmp_file"
-  else
-    printf '%s=%s\n' "$key" "$value" > "$tmp_file"
-  fi
-
-  mv "$tmp_file" "$file"
 }
 
 latest_version() {
@@ -111,10 +82,13 @@ install_docker() {
     exit 1
   fi
 
-  data_group_id="$(id -g)"
+  if [ -z "$INSTALL_DIR_OVERRIDE" ] && [ "$(id -u)" -ne 0 ]; then
+    echo "Docker installation writes to /opt/stacks/agent-file-hub; run the installer with sudo." >&2
+    exit 1
+  fi
+
+  INSTALL_DIR="${INSTALL_DIR_OVERRIDE:-/opt/stacks/agent-file-hub}"
   mkdir -p "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
-  chgrp "$data_group_id" "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
-  chmod 2770 "$INSTALL_DIR/data" "$INSTALL_DIR/storage"
   cd "$INSTALL_DIR"
 
   compose_tmp="$INSTALL_DIR/.docker-compose.yaml.$$"
@@ -131,21 +105,17 @@ install_docker() {
     exit 1
   fi
 
-  set_env_value "$INSTALL_DIR/.env" AGENT_FILE_HUB_VERSION "$VERSION"
-  set_env_value "$INSTALL_DIR/.env" HOST_PORT "$HOST_PORT"
-  set_env_value "$INSTALL_DIR/.env" DATA_GROUP_ID "$data_group_id"
-
   docker compose pull
   docker compose up -d
 
   echo
   echo "Agent File Hub Docker deployment is ready."
-  echo "Version: $VERSION"
   echo "Install dir: $INSTALL_DIR"
-  echo "URL: http://127.0.0.1:${HOST_PORT}"
+  echo "URL: http://127.0.0.1:18787"
 }
 
 install_direct() {
+  INSTALL_DIR="${INSTALL_DIR_OVERRIDE:-$HOME/agent-file-hub}"
   platform="$(detect_asset_platform)"
   asset_url="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}/${APP_NAME}-${platform}"
   cli_asset_url="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}/${CLI_APP_NAME}-${platform}"
@@ -195,15 +165,6 @@ EOF
   fi
 }
 
-if [ -z "$VERSION" ]; then
-  VERSION="$(latest_version)"
-fi
-VERSION="$(normalize_version "$VERSION")"
-if [ -z "$VERSION" ]; then
-  echo "Cannot resolve latest Agent File Hub version from $MANIFEST_URL" >&2
-  exit 1
-fi
-
 if [ "$MODE" = "auto" ]; then
   if command_exists docker && docker compose version >/dev/null 2>&1; then
     MODE="docker"
@@ -211,6 +172,19 @@ if [ "$MODE" = "auto" ]; then
     MODE="direct"
   fi
 fi
+
+case "$MODE" in
+  direct|binary|local)
+    if [ -z "$VERSION" ]; then
+      VERSION="$(latest_version)"
+    fi
+    VERSION="$(normalize_version "$VERSION")"
+    if [ -z "$VERSION" ]; then
+      echo "Cannot resolve latest Agent File Hub version from $MANIFEST_URL" >&2
+      exit 1
+    fi
+    ;;
+esac
 
 case "$MODE" in
   docker|compose) install_docker ;;

@@ -23,8 +23,8 @@ Default recommendation: use Docker Compose for servers and long-running deployme
 - CLI binary: `afile`
 - Default external port: `18787`
 - Docker container port: `9000`
-- Docker install directory: `~/agent-file-hub`
-- Docker storage directory: `~/agent-file-hub/storage`
+- Docker install directory: `/opt/stacks/agent-file-hub`
+- Docker storage directory: `/opt/stacks/agent-file-hub/storage`
 - Direct-run storage directory: `./storage`
 - Direct-run CLI path: `~/agent-file-hub/afile`
 - User skill install path: `~/.agents/skills/agent-file-hub/SKILL.md`
@@ -47,7 +47,7 @@ First browser access should open the setup page if no admin account exists. Ask 
    ```bash
    lsof -nP -iTCP:18787 -sTCP:LISTEN || true
    ```
-   If occupied, either stop the existing service after user approval or choose another `HOST_PORT`.
+   If occupied, either stop the existing service after user approval or edit the host port in `docker-compose.yaml`.
 
 3. Choose install mode:
    - Server, Linux VM, NAS, or long-running deployment: Docker Compose.
@@ -62,22 +62,13 @@ First browser access should open the setup page if no admin account exists. Ask 
 Recommended for servers and long-running use.
 
 ```bash
-u=https://my.rongyiapi.com
-p=/ai-agent-file-hub/install.sh
-curl -fsSL "$u$p" -o install.sh
-AGENT_FILE_HUB_MODE=docker bash install.sh
-```
-
-Custom port or version:
-
-```bash
-AGENT_FILE_HUB_VERSION=v1.0.3 HOST_PORT=18787 AGENT_FILE_HUB_MODE=docker bash install.sh
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && sudo sh install.sh docker
 ```
 
 After install:
 
 ```bash
-cd ~/agent-file-hub
+cd /opt/stacks/agent-file-hub
 docker compose ps
 docker compose logs --tail=80 agent-file-hub
 curl -I http://127.0.0.1:18787/
@@ -86,14 +77,13 @@ curl -I http://127.0.0.1:18787/
 Update:
 
 ```bash
-curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh
-AGENT_FILE_HUB_MODE=docker bash install.sh
+curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && sudo sh install.sh docker
 ```
 
 Restart and stop:
 
 ```bash
-cd ~/agent-file-hub
+cd /opt/stacks/agent-file-hub
 docker compose restart
 docker compose down
 ```
@@ -101,15 +91,11 @@ docker compose down
 Uninstall while keeping data:
 
 ```bash
-cd ~/agent-file-hub
+cd /opt/stacks/agent-file-hub
 docker compose down
 ```
 
-Remove data only after explicit user approval:
-
-```bash
-docker volume rm agent_file_hub_data
-```
+Remove the `/opt/stacks/agent-file-hub/data` and `/opt/stacks/agent-file-hub/storage` directories only after explicit user approval.
 
 ## Direct Release Install
 
@@ -126,38 +112,38 @@ AGENT_FILE_HUB_MODE=direct bash install.sh
 Pin a specific version:
 
 ```bash
-AGENT_FILE_HUB_VERSION=v1.0.3 AGENT_FILE_HUB_MODE=direct bash install.sh
+AGENT_FILE_HUB_VERSION=v1.0.4 AGENT_FILE_HUB_MODE=direct bash install.sh
 ```
 
 Linux x64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.3/agent_file_hub-linux-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.4/agent_file_hub-linux-amd64
 ```
 
 Linux ARM64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.3/agent_file_hub-linux-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.4/agent_file_hub-linux-arm64
 ```
 
 macOS Apple Silicon asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.3/agent_file_hub-darwin-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.4/agent_file_hub-darwin-arm64
 ```
 
 macOS Intel asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.3/agent_file_hub-darwin-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.4/agent_file_hub-darwin-amd64
 ```
 
 Windows assets:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.3/agent_file_hub-windows-amd64.exe
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.3/agent_file_hub-windows-arm64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.4/agent_file_hub-windows-amd64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.4/agent_file_hub-windows-arm64.exe
 ```
 
 Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the server binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set. The direct installer also installs `~/agent-file-hub/afile` for CLI mode.
@@ -226,7 +212,7 @@ FILE_BROWSER_AUTH_PATH=<optional auth.json path>
 FILE_BROWSER_STORAGES_PATH=<optional storages.json path>
 ```
 
-Docker installer maps `HOST_PORT` to container port `9000`, and sets `FILE_BROWSER_ROOT=/app/storage` inside the container.
+Docker Compose maps host port `18787` to container port `9000`, and sets `FILE_BROWSER_ROOT=/app/storage` inside the container.
 
 ## Verification Checklist
 
@@ -253,10 +239,11 @@ Port occupied:
 lsof -nP -iTCP:18787 -sTCP:LISTEN
 ```
 
-Choose another port:
+Choose another port by editing the host-side value in `docker-compose.yaml`, for example:
 
-```bash
-HOST_PORT=18788 AGENT_FILE_HUB_MODE=docker bash install.sh
+```yaml
+ports:
+  - "18788:9000"
 ```
 
 Docker missing:
@@ -267,7 +254,7 @@ Docker missing:
 Container starts then exits:
 
 ```bash
-cd ~/agent-file-hub
+cd /opt/stacks/agent-file-hub
 docker compose logs --tail=120 agent-file-hub
 ```
 

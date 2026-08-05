@@ -9,7 +9,7 @@
 - 当前源码仓库 Release 生成多平台二进制产物。
 - `duolabmeng6/ai-agent-file-hub` Release 使用同一个 tag，并上传同名服务端二进制和 `afile` CLI 二进制产物。
 - Docker Hub 镜像 `duolabmeng/agent_file_hub` 使用同一个 tag 构建和推送。
-- 官网仓库资料随 tag 同步：`readme.md`、`docs/index.html`、`docs/version.json`、`docs/docker-compose.yaml`、`docs/install.sh`、`run.sh`、`docker-compose.yaml`、`.env.example`、公开 Skill 和本 SOP。
+- 官网仓库资料随 tag 同步：`readme.md`、`docs/index.html`、`docs/version.json`、`docs/docker-compose.yaml`、`docs/install.sh`、`run.sh`、`docker-compose.yaml`、公开 Skill 和本 SOP。
 - GitHub Pages 在官网仓库 `main` 更新后自动部署。
 
 ## 版本来源
@@ -101,7 +101,6 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 - `docs/release-sop.md`
 - `run.sh`
 - `docker-compose.yaml`
-- `.env.example`
 - `Dockerfile`
 
 ## 官网资料约定
@@ -116,6 +115,10 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 | 当前版本 | tag / `web/app/package.json` | `docs/version.json`、官网页面、安装脚本、公开 Compose、Docker 配置 |
 
 官网页面上的版本号、Release 链接、服务端二进制下载链接、CLI 下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/docker-compose.yaml` 是官网手动 Docker 部署与安装脚本共同读取的公开配置，禁止再在 `install.sh` 内维护第二份 Compose 内容。`docs/version.json` 同时作为应用内检查更新、CLI 下载入口和 `install.sh` 默认版本解析的 manifest。
+
+公开 Compose 必须保持单文件零配置部署：镜像 tag、时区和端口直接写入 YAML，使用 `./data` 和 `./storage` 宿主机目录，容器以 root 用户运行以避免首次挂载的目录权限问题，用户保存文件后只需执行 `docker compose up -d`。不要重新引入命名卷、Compose 插值变量、`.env`、`DATA_GROUP_ID` 或启动前的 `chgrp/chmod` 步骤。
+
+自动安装脚本的 Docker 默认目录固定为 `/opt/stacks/agent-file-hub`，官网复制按钮必须提供可直接执行的 sudo 单行命令；直接运行模式仍默认使用 `~/agent-file-hub`。
 
 ## AI Agent 安装技能发版规则
 
@@ -195,7 +198,7 @@ scripts/sync-file-hub-release-docs.sh /Users/ll/Desktop/2026/ai-agent-file-hub
 
 ```bash
 cd /Users/ll/Desktop/2026/ai-agent-file-hub
-git add readme.md docs/index.html docs/version.json docs/docker-compose.yaml docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml .env.example Dockerfile
+git add readme.md docs/index.html docs/version.json docs/docker-compose.yaml docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml Dockerfile
 git commit -m "docs: 同步 v1.0.1 官网资料"
 git push
 ```
