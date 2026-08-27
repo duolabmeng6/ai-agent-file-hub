@@ -36,7 +36,7 @@ curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh &
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.5` | 仅直接运行模式使用；指定要下载的 Release 版本 |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.6` | 仅直接运行模式使用；指定要下载的 Release 版本 |
 | `AGENT_FILE_HUB_MODE` | `auto` | 安装脚本使用；`docker` 使用 Docker Compose，`direct` 下载本地二进制 |
 | `AGENT_FILE_HUB_HOME` | 自动选择 | 高级覆盖；Docker 默认 `/opt/stacks/agent-file-hub`，直接运行默认 `~/agent-file-hub` |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
@@ -56,7 +56,7 @@ docker run -d \
   -e FILE_BROWSER_ROOT=/app/storage \
   -v "$PWD/data:/app/data" \
   -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.5
+  duolabmeng/agent_file_hub:v1.0.6
 ```
 
 更新 Docker 容器：
