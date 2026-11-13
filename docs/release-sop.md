@@ -94,6 +94,7 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 
 - `readme.md`
 - `docs/index.html`
+- `docs/afile.html`（由产品仓库同名命令参考文档同步）
 - `docs/version.json`
 - `docs/docker-compose.yaml`
 - `docs/install.sh`
@@ -198,7 +199,7 @@ scripts/sync-file-hub-release-docs.sh /Users/ll/Desktop/2026/ai-agent-file-hub
 
 ```bash
 cd /Users/ll/Desktop/2026/ai-agent-file-hub
-git add readme.md docs/index.html docs/version.json docs/docker-compose.yaml docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml Dockerfile
+git add readme.md docs/index.html docs/afile.html docs/version.json docs/docker-compose.yaml docs/install.sh docs/skills/agent-file-hub/SKILL.md docs/release-sop.md run.sh docker-compose.yaml Dockerfile
 git commit -m "docs: 同步 v1.0.1 官网资料"
 git push
 ```
@@ -220,3 +221,7 @@ Pages 未部署：
 各平台只发布一个 `afile`，无参数运行启动 Web，子命令提供 CLI 与 MCP。旧版自动更新器写死旧资产名，首次切换需停止旧服务并重新运行 direct 安装脚本；数据目录保持原位置。安装脚本保留已有文件备份，不删除业务数据。
 
 压缩包只含一个程序；内嵌前端存入 dist.zip，在启动时解压到内存并维持 Seek/Range 支持。应用自动更新下载并校验 gzip 后有界解压，任何错误均不进入程序替换阶段；解压成功后沿用原 helper 预检和失败回滚。
+
+## afile 命令参考
+
+独立文档源为 `ll-filebrowser/docs/afile.html`，同步到官网同名路径；首页导航和页脚提供链接。命令或参数变化时按真实 `--help` 更新文档，核对默认地址、后台进程边界、Workspace 访问码、文本输入三选一与删除确认。命令文档不作为第三种安装模式。

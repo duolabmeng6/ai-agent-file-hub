@@ -32,7 +32,7 @@ docker compose pull
 docker compose up -d
 ```
 
-[查看 Compose 配置](https://github.com/duolabmeng6/ai-agent-file-hub/blob/main/docker-compose.yaml) · [打开官网](https://my.rongyiapi.com/ai-agent-file-hub/)
+[查看 Compose 配置](https://github.com/duolabmeng6/ai-agent-file-hub/blob/main/docker-compose.yaml) · [afile 命令参考](https://my.rongyiapi.com/ai-agent-file-hub/afile.html) · [打开官网](https://my.rongyiapi.com/ai-agent-file-hub/)
 
 ## 产品能力
 

@@ -75,7 +75,7 @@
       .wrap { width: calc(100% - 40px); }
       .nav { height: 68px; }
       .nav-links { gap: 18px; font-size: 13px; }
-      .nav-links .features-link { display: none; }
+      .nav-links .features-link, .nav-links a[href="#install"] { display: none; }
       .brand { font-size: 14px; gap: 8px; }
       .hero { padding-top: 58px; }
       h1 { font-size: clamp(32px, 7.8vw, 50px); letter-spacing: -1.5px; }
@@ -99,7 +99,7 @@
 <body>
   <nav class="nav wrap" aria-label="主导航">
     <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">AF</span>Agent File Hub</a>
-    <div class="nav-links"><a href="#install">开始使用</a><a class="features-link" href="#features">产品能力</a><a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub ↗</a></div>
+    <div class="nav-links"><a href="#install">开始使用</a><a class="features-link" href="#features">产品能力</a><a href="./afile.html">命令文档</a><a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub ↗</a></div>
   </nav>
   <header class="hero wrap" id="top">
     <p class="eyebrow">人与 Agent 共用的文件工作台</p>
@@ -145,7 +145,7 @@ docker compose up -d</pre>
       </div>
     </section>
   </main>
-  <footer><div class="wrap footer-inner"><span>Agent File Hub · v1.0.12</span><div class="footer-links"><a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub ↗</a><a href="https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md">Agent 安装技能 ↗</a></div></div></footer>
+  <footer><div class="wrap footer-inner"><span>Agent File Hub · v1.0.12</span><div class="footer-links"><a href="./afile.html">afile 命令参考 ↗</a><a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub ↗</a><a href="https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md">Agent 安装技能 ↗</a></div></div></footer>
   <script>
     document.querySelectorAll("[data-copy]").forEach((button) => {
       button.addEventListener("click", async () => {
