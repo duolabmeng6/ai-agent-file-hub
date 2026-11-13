@@ -112,38 +112,38 @@ AGENT_FILE_HUB_MODE=direct bash install.sh
 Pin a specific version:
 
 ```bash
-AGENT_FILE_HUB_VERSION=v1.0.9 AGENT_FILE_HUB_MODE=direct bash install.sh
+AGENT_FILE_HUB_VERSION=v1.0.10 AGENT_FILE_HUB_MODE=direct bash install.sh
 ```
 
 Linux x64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.9/agent_file_hub-linux-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.10/agent_file_hub-linux-amd64
 ```
 
 Linux ARM64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.9/agent_file_hub-linux-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.10/agent_file_hub-linux-arm64
 ```
 
 macOS Apple Silicon asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.9/agent_file_hub-darwin-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.10/agent_file_hub-darwin-arm64
 ```
 
 macOS Intel asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.9/agent_file_hub-darwin-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.10/agent_file_hub-darwin-amd64
 ```
 
 Windows assets:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.9/agent_file_hub-windows-amd64.exe
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.9/agent_file_hub-windows-arm64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.10/agent_file_hub-windows-amd64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.10/agent_file_hub-windows-arm64.exe
 ```
 
 Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the server binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set. The direct installer also installs `~/agent-file-hub/afile` for CLI mode.

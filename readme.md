@@ -36,7 +36,7 @@ curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh &
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.9` | 仅直接运行模式使用；指定要下载的 Release 版本 |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.10` | 仅直接运行模式使用；指定要下载的 Release 版本 |
 | `AGENT_FILE_HUB_MODE` | `auto` | 安装脚本使用；`docker` 使用 Docker Compose，`direct` 下载本地二进制 |
 | `AGENT_FILE_HUB_HOME` | 自动选择 | 高级覆盖；Docker 默认 `/opt/stacks/agent-file-hub`，直接运行默认 `~/agent-file-hub` |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
@@ -56,7 +56,7 @@ docker run -d \
   -e FILE_BROWSER_ROOT=/app/storage \
   -v "$PWD/data:/app/data" \
   -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.9
+  duolabmeng/agent_file_hub:v1.0.10
 ```
 
 更新 Docker 容器：
@@ -620,7 +620,7 @@ FILE_BROWSER_GITHUB_CLI_PATH=/path/to/gh
 
 Markdown / Obsidian 文档站使用服务端统一搜索索引，支持目录、标题、正文以及名称拼音首字母。目录结果可打开最新文档，或进入目录内按日期倒序浏览和搜索；每页返回 20 篇文档。
 
-发布站点时后台建立索引。之后有人访问且距上次检查超过 1 小时，才后台检查文件变化；无人访问时没有周期性扫描。通过本应用修改文件会标记待更新，在下次访问时处理。搜索面板保留“立即更新”，更新期间继续使用已有结果。
+发布站点时后台建立索引。之后有人访问且距上次检查超过 1 小时，才后台检查文件变化；无人访问时没有周期性扫描。通过本应用修改文件会标记待更新，在下次访问时处理。公开阅读页不提供手动更新入口，后台检查期间继续使用已有结果。
 
 索引默认保存在 `doc-sites.json` 同目录的 `doc-search.sqlite`，也可以用 `FILE_BROWSER_DOC_SEARCH_PATH` 指定；应放在应用本地磁盘。索引包含供搜索使用的文档文本，按私有数据管理，不提交仓库。共享盘断连或部分文件读取失败时保留已有结果并提示，不把失败当成文件删除。SQLite 驱动为纯 Go，构建不依赖 CGO。
 
