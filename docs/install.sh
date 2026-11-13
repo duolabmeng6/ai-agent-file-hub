@@ -7,8 +7,7 @@ COMPOSE_URL="${AGENT_FILE_HUB_COMPOSE_URL:-${PUBLIC_BASE_URL}/docker-compose.yam
 VERSION="${AGENT_FILE_HUB_VERSION:-}"
 MODE="${1:-${AGENT_FILE_HUB_MODE:-auto}}"
 INSTALL_DIR_OVERRIDE="${AGENT_FILE_HUB_HOME:-}"
-APP_NAME="agent_file_hub"
-CLI_APP_NAME="afile"
+APP_NAME="afile"
 
 command_exists() {
   command -v "$1" >/dev/null 2>&1
@@ -117,32 +116,32 @@ install_docker() {
 install_direct() {
   INSTALL_DIR="${INSTALL_DIR_OVERRIDE:-$HOME/agent-file-hub}"
   platform="$(detect_asset_platform)"
-  asset_url="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}/${APP_NAME}-${platform}"
-  cli_asset_url="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}/${CLI_APP_NAME}-${platform}"
+  asset="${APP_NAME}-${platform}.gz"
+  release_base="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/${VERSION}"
+  asset_url="${release_base}/${asset}"
   mkdir -p "$INSTALL_DIR/storage" "$INSTALL_DIR/data"
-  tmp_file="$INSTALL_DIR/.${APP_NAME}.${VERSION}.$$"
-  cli_tmp_file="$INSTALL_DIR/.${CLI_APP_NAME}.${VERSION}.$$"
-
-  download_file "$asset_url" "$tmp_file"
-  chmod +x "$tmp_file"
-  cli_available=0
-  if download_file "$cli_asset_url" "$cli_tmp_file"; then
-    chmod +x "$cli_tmp_file"
-    cli_available=1
+  staging="$(mktemp -d "$INSTALL_DIR/.afile-install.XXXXXX")"
+  trap 'rm -rf "$staging"' EXIT
+  trap 'exit 1' HUP INT TERM
+  download_file "$asset_url" "$staging/$asset"
+  download_file "${release_base}/checksums.txt" "$staging/checksums.txt"
+  expected="$(awk -v asset="$asset" '$2 == asset { print $1 }' "$staging/checksums.txt")"
+  if [ "${#expected}" -ne 64 ]; then echo "Invalid checksum for $asset" >&2; exit 1; fi
+  if command_exists sha256sum; then
+    actual="$(sha256sum "$staging/$asset" | awk '{print $1}')"
+  elif command_exists shasum; then
+    actual="$(shasum -a 256 "$staging/$asset" | awk '{print $1}')"
   else
-    rm -f "$cli_tmp_file"
-    echo "CLI asset is not available for $VERSION; continuing without afile." >&2
+    echo "sha256sum or shasum is required" >&2; exit 1
   fi
+  if [ "$actual" != "$expected" ]; then echo "SHA-256 mismatch for $asset" >&2; exit 1; fi
+  gzip -dc "$staging/$asset" > "$staging/afile"
+  test -s "$staging/afile"
+  chmod +x "$staging/afile"
   if [ -f "$INSTALL_DIR/$APP_NAME" ]; then
-    cp "$INSTALL_DIR/$APP_NAME" "$INSTALL_DIR/$APP_NAME.previous" 2>/dev/null || true
+    cp "$INSTALL_DIR/$APP_NAME" "$INSTALL_DIR/$APP_NAME.previous"
   fi
-  if [ "$cli_available" = "1" ] && [ -f "$INSTALL_DIR/$CLI_APP_NAME" ]; then
-    cp "$INSTALL_DIR/$CLI_APP_NAME" "$INSTALL_DIR/$CLI_APP_NAME.previous" 2>/dev/null || true
-  fi
-  mv "$tmp_file" "$INSTALL_DIR/$APP_NAME"
-  if [ "$cli_available" = "1" ]; then
-    mv "$cli_tmp_file" "$INSTALL_DIR/$CLI_APP_NAME"
-  fi
+  mv "$staging/afile" "$INSTALL_DIR/$APP_NAME"
 
   cat > "$INSTALL_DIR/run-local.sh" <<'EOF'
 #!/usr/bin/env sh
@@ -151,7 +150,7 @@ cd "$(dirname "$0")"
 PORT="${PORT:-18787}"
 FILE_BROWSER_ROOT="${FILE_BROWSER_ROOT:-$PWD/storage}"
 export PORT FILE_BROWSER_ROOT
-exec ./agent_file_hub "$@"
+exec ./afile "$@"
 EOF
   chmod +x "$INSTALL_DIR/run-local.sh"
 
@@ -160,9 +159,7 @@ EOF
   echo "Version: $VERSION"
   echo "Install dir: $INSTALL_DIR"
   echo "Run: $INSTALL_DIR/run-local.sh"
-  if [ "$cli_available" = "1" ]; then
-    echo "CLI: $INSTALL_DIR/afile"
-  fi
+  echo "CLI: $INSTALL_DIR/afile"
 }
 
 if [ "$MODE" = "auto" ]; then

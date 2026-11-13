@@ -52,7 +52,7 @@ First browser access should open the setup page if no admin account exists. Ask 
 3. Choose install mode:
    - Server, Linux VM, NAS, or long-running deployment: Docker Compose.
    - Local macOS/Linux trial without Docker: release binary.
-   - Windows desktop: release `.exe`.
+   - Windows desktop: release ZIP, extract and run `afile.exe`.
    - Developer machine modifying source: source build.
 
 4. Install, start, verify, then tell the user the access URL.
@@ -99,7 +99,7 @@ Remove the `/opt/stacks/agent-file-hub/data` and `/opt/stacks/agent-file-hub/sto
 
 ## Direct Release Install
 
-Use release binaries when Docker is unavailable.
+Use release packages when Docker is unavailable. Linux/macOS assets are gzip files; decompress to `afile` and mark executable. Windows ZIP contains only `afile.exe`. The direct installer verifies the archive SHA-256 before decompressing.
 
 Auto-detect macOS/Linux platform and install or update the local binary:
 
@@ -112,41 +112,41 @@ AGENT_FILE_HUB_MODE=direct bash install.sh
 Pin a specific version:
 
 ```bash
-AGENT_FILE_HUB_VERSION=v1.0.11 AGENT_FILE_HUB_MODE=direct bash install.sh
+AGENT_FILE_HUB_VERSION=v1.0.12 AGENT_FILE_HUB_MODE=direct bash install.sh
 ```
 
 Linux x64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.11/agent_file_hub-linux-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/latest/download/afile-linux-amd64.gz
 ```
 
 Linux ARM64 asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.11/agent_file_hub-linux-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/latest/download/afile-linux-arm64.gz
 ```
 
 macOS Apple Silicon asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.11/agent_file_hub-darwin-arm64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/latest/download/afile-darwin-arm64.gz
 ```
 
 macOS Intel asset:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.11/agent_file_hub-darwin-amd64
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/latest/download/afile-darwin-amd64.gz
 ```
 
 Windows assets:
 
 ```text
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.11/agent_file_hub-windows-amd64.exe
-https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.11/agent_file_hub-windows-arm64.exe
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/latest/download/afile-windows-amd64.zip
+https://github.com/duolabmeng6/ai-agent-file-hub/releases/latest/download/afile-windows-arm64.zip
 ```
 
-Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the server binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set. The direct installer also installs `~/agent-file-hub/afile` for CLI mode.
+Direct-run files are installed under `~/agent-file-hub` by default. `run-local.sh` starts the server binary from that directory and uses `~/agent-file-hub/storage` unless `FILE_BROWSER_ROOT` is set. The installer downloads only `afile`: run it without arguments to start the server, or use CLI and MCP subcommands.
 
 ## CLI Mode
 

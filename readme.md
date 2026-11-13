@@ -36,7 +36,7 @@ curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh &
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `AGENT_FILE_HUB_VERSION` | `v1.0.11` | 仅直接运行模式使用；指定要下载的 Release 版本 |
+| `AGENT_FILE_HUB_VERSION` | `v1.0.12` | 仅直接运行模式使用；指定要下载的 Release 版本 |
 | `AGENT_FILE_HUB_MODE` | `auto` | 安装脚本使用；`docker` 使用 Docker Compose，`direct` 下载本地二进制 |
 | `AGENT_FILE_HUB_HOME` | 自动选择 | 高级覆盖；Docker 默认 `/opt/stacks/agent-file-hub`，直接运行默认 `~/agent-file-hub` |
 | `FILE_BROWSER_AUTH_USERNAME` | `admin` | 初始化管理员用户名 |
@@ -56,7 +56,7 @@ docker run -d \
   -e FILE_BROWSER_ROOT=/app/storage \
   -v "$PWD/data:/app/data" \
   -v "$PWD/storage:/app/storage" \
-  duolabmeng/agent_file_hub:v1.0.11
+  duolabmeng/agent_file_hub:v1.0.12
 ```
 
 更新 Docker 容器：
@@ -75,9 +75,9 @@ AGENT_FILE_HUB_MODE=direct bash install.sh
 ~/agent-file-hub/run-local.sh
 ```
 
-直接运行模式会安装服务端二进制 `agent_file_hub`；当前版本包含 CLI 资产时，会同时安装命令行工具 `afile`。
+直接运行模式只安装一个 `afile`，无参数启动 Web 服务，也支持 CLI 和 MCP 子命令。
 
-Windows 请在 Releases 下载对应架构文件运行。
+Windows 请在 Releases 下载对应架构 ZIP，解压后运行 afile.exe。Linux/macOS 的 gzip 包解压后运行 afile。
 
 ### 模式三：CLI 启动与 Workspace 操作
 
@@ -140,28 +140,22 @@ Linux：
 
 | 文件 | 说明 |
 | --- | --- |
-| `agent_file_hub-linux-amd64` | x64 服务器二进制，下载后 `chmod +x` 运行 |
-| `agent_file_hub-linux-arm64` | ARM64 服务器二进制，适合 ARM 云服务器和开发板 |
-| `afile-linux-amd64` | x64 CLI 二进制，支持启动 Web、MCP 配置和 Workspace 文件操作 |
-| `afile-linux-arm64` | ARM64 CLI 二进制 |
+| `afile-linux-amd64.gz` | x64 单文件程序（含 Web、CLI、MCP），支持启动 Web、MCP 配置和 Workspace 文件操作 |
+| `afile-linux-arm64.gz` | ARM64 单文件程序（含 Web、CLI、MCP） |
 
 Windows：
 
 | 文件 | 说明 |
 | --- | --- |
-| `agent_file_hub-windows-amd64.exe` | Windows x64 可执行文件 |
-| `agent_file_hub-windows-arm64.exe` | Windows ARM64 可执行文件 |
-| `afile-windows-amd64.exe` | Windows x64 CLI 二进制 |
-| `afile-windows-arm64.exe` | Windows ARM64 CLI 二进制 |
+| `afile-windows-amd64.zip` | Windows x64 单文件程序（含 Web、CLI、MCP） |
+| `afile-windows-arm64.zip` | Windows ARM64 单文件程序（含 Web、CLI、MCP） |
 
 macOS：
 
 | 文件 | 说明 |
 | --- | --- |
-| `agent_file_hub-darwin-amd64` | Intel Mac 二进制，下载后 `chmod +x` 运行 |
-| `agent_file_hub-darwin-arm64` | Apple Silicon 二进制，下载后 `chmod +x` 运行 |
-| `afile-darwin-amd64` | Intel Mac CLI 二进制 |
-| `afile-darwin-arm64` | Apple Silicon CLI 二进制 |
+| `afile-darwin-amd64.gz` | Intel Mac 单文件程序（含 Web、CLI、MCP） |
+| `afile-darwin-arm64.gz` | Apple Silicon 单文件程序（含 Web、CLI、MCP） |
 
 一句话定位：
 
@@ -401,7 +395,7 @@ web/app
   Vue 3 + Vite + Pinia + Tailwind CSS
         │
         ▼
-cmd/server
+cmd/afile
   Gin HTTP API
         │
         ▼
@@ -421,7 +415,7 @@ data/*.json
   storages / auth / shares / shared-folders / sync-tasks / doc-sites / audit
 ```
 
-后端使用 Go + Gin，前端使用 Vue 3 + Vite。生产构建可以把前端资源通过 `embedweb` build tag 内置到 Go 二进制。
+后端使用 Go + Gin，前端使用 Vue 3 + Vite。发布程序统一为 `afile`，内置 Web、CLI 和 MCP。无参数启动 Web，子命令执行终端操作；各平台只需下载对应架构的一个压缩包（Linux/macOS gzip，Windows ZIP），解压后只有一个可执行文件。生产构建使用 `embedweb,nomsgpack`，内置前端并移除未使用的 MessagePack 支持。
 
 ## 快速开始
 
@@ -433,7 +427,7 @@ data/*.json
 启动后端：
 
 ```bash
-go run ./cmd/server
+go run ./cmd/afile
 ```
 
 默认访问地址：

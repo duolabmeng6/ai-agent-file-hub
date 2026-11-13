@@ -6,8 +6,8 @@
 
 一次 tag 发版必须同时完成：
 
-- 当前源码仓库 Release 生成多平台二进制产物。
-- `duolabmeng6/ai-agent-file-hub` Release 使用同一个 tag，并上传同名服务端二进制和 `afile` CLI 二进制产物。
+- 当前源码仓库 Release 生成六个平台的 afile 压缩包与 checksums.txt。
+- `duolabmeng6/ai-agent-file-hub` Release 使用同一个 tag 和同一套 afile 压缩包，不再分别分发服务端与 CLI 二进制。
 - Docker Hub 镜像 `duolabmeng/agent_file_hub` 使用同一个 tag 构建和推送。
 - 官网仓库资料随 tag 同步：`readme.md`、`docs/index.html`、`docs/version.json`、`docs/docker-compose.yaml`、`docs/install.sh`、`run.sh`、`docker-compose.yaml`、公开 Skill 和本 SOP。
 - GitHub Pages 在官网仓库 `main` 更新后自动部署。
@@ -75,10 +75,10 @@ Release workflow 执行顺序：
 
 1. 校验 tag 与 `web/app/package.json` 版本一致。
 2. 构建前端并嵌入 Go 二进制。
-3. 构建 `agent_file_hub-*` 服务端多平台产物和 `afile-*` CLI 多平台产物。
+3. 构建六个平台的 `afile` 单文件，使用 `embedweb,nomsgpack` 构建标签；通过 `scripts/package-release.py` 打包 Linux/macOS gzip 与 Windows ZIP，并生成压缩包 SHA-256 清单。
 4. 发布当前源码仓库 Release。
 5. 发布 `duolabmeng6/ai-agent-file-hub` 同 tag Release。
-6. 构建并推送 Docker Hub 镜像。
+6. 先生成统一 afile 的 Dockerfile 和官网材料，再构建并推送 Docker Hub 镜像。
 7. 写入 `duolabmeng6/ai-agent-file-hub` Release Notes。
 8. 调用 `scripts/sync-file-hub-release-docs.sh` 同步官网资料。
 9. 如果官网仓库有 diff，则提交并 push 到 `main`。
@@ -214,3 +214,9 @@ Pages 未部署：
 - 检查 `duolabmeng6/ai-agent-file-hub` 的 `.github/workflows/pages.yml`。
 - 确认官网仓库 `main` 已收到 `docs/**` 更新。
 - 手动触发 Pages workflow。
+
+## 单文件版本迁移
+
+各平台只发布一个 `afile`，无参数运行启动 Web，子命令提供 CLI 与 MCP。旧版自动更新器写死旧资产名，首次切换需停止旧服务并重新运行 direct 安装脚本；数据目录保持原位置。安装脚本保留已有文件备份，不删除业务数据。
+
+压缩包只含一个程序；内嵌前端存入 dist.zip，在启动时解压到内存并维持 Seek/Range 支持。应用自动更新下载并校验 gzip 后有界解压，任何错误均不进入程序替换阶段；解压成功后沿用原 helper 预检和失败回滚。
