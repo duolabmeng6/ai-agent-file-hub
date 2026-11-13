@@ -109,16 +109,16 @@ scripts/sync-file-hub-release-docs.sh /path/to/ai-agent-file-hub
 
 | 内容 | 源头 | 官网位置 |
 | --- | --- | --- |
-| 产品介绍 | `ll-filebrowser/readme.md` | `ai-agent-file-hub/readme.md` |
+| 产品介绍与安装说明 | `scripts/sync-file-hub-release-docs.sh` | `ai-agent-file-hub/readme.md` |
 | 用户安装 Skill | `.agents/skills/agent-file-hub/SKILL.md` | `docs/skills/agent-file-hub/SKILL.md` |
 | 发版 SOP | `docs/release-sop.md` | `docs/release-sop.md` |
 | 当前版本 | tag / `web/app/package.json` | `docs/version.json`、官网页面、安装脚本、公开 Compose、Docker 配置 |
 
-官网页面上的版本号、Release 链接、服务端二进制下载链接、CLI 下载链接、Docker 标签和页脚版本都必须随 tag 更新。`docs/docker-compose.yaml` 是官网手动 Docker 部署与安装脚本共同读取的公开配置，禁止再在 `install.sh` 内维护第二份 Compose 内容。`docs/version.json` 同时作为应用内检查更新、CLI 下载入口和 `install.sh` 默认版本解析的 manifest。
+官网页面上的版本号和页脚版本、Agent 使用的压缩包清单及 Docker 标签必须随 tag 更新。官网与公开 README 只呈现 Agent 安装和服务器 Docker Compose，不展示系统下载列表或独立 CLI 模式。`docs/docker-compose.yaml` 是官网手动 Docker 部署与安装脚本共同读取的公开配置，禁止再在 `install.sh` 内维护第二份 Compose 内容。`docs/version.json` 同时作为应用内检查更新、CLI 下载入口和 `install.sh` 默认版本解析的 manifest。
 
 公开 Compose 必须保持单文件零配置部署：镜像 tag、时区和端口直接写入 YAML，使用 `./data` 和 `./storage` 宿主机目录，容器以 root 用户运行以避免首次挂载的目录权限问题，用户保存文件后只需执行 `docker compose up -d`。不要重新引入命名卷、Compose 插值变量、`.env`、`DATA_GROUP_ID` 或启动前的 `chgrp/chmod` 步骤。
 
-自动安装脚本的 Docker 默认目录固定为 `/opt/stacks/agent-file-hub`，官网复制按钮必须提供可直接执行的 sudo 单行命令；直接运行模式仍默认使用 `~/agent-file-hub`。
+自动安装脚本的 Docker 默认目录固定为 `/opt/stacks/agent-file-hub`，安装脚本由 Agent 技能使用，官网服务器入口提供仓库 Docker Compose 的克隆与启动命令；直接运行模式仍默认使用 `~/agent-file-hub`。
 
 ## AI Agent 安装技能发版规则
 
@@ -172,10 +172,10 @@ docker pull duolabmeng/agent_file_hub:latest
 检查页面：
 
 - 官网首页显示当前版本。
-- 下载链接指向当前 tag。
-- Docker 安装区能够读取、展示、复制和下载公开 `docker-compose.yaml`。
+- 只保留 Agent 与 Docker Compose 两张安装卡片，无独立下载区或 CLI 模式。
+- Docker 部署命令保留换行，复制后可执行，并链接到实际使用的仓库 Compose 文件。
 - 智能安装技能区块显示一句话安装入口和公开 Skill 地址。
-- CLI 模式区块显示 `afile serve/status/mcp/workspace` 的最小使用路径，且下载入口包含 `afile-*` 资产。
+- 命令行、平台选择和压缩包下载细节保留在 Agent Skill 与版本清单中；后续发版不得重新插入公开页面。
 - GitHub 图标跳转到 `https://github.com/duolabmeng6/ai-agent-file-hub`。
 
 ## 失败恢复

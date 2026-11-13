@@ -1,1347 +1,169 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI智能体文件中枢 - Agent File Hub</title>
-    <meta
-      name="description"
-      content="AI智能体文件中枢，把本地目录、对象存储、SFTP、Git 仓库统一成面向人和 Agent 的文件、记忆与技能基础设施。"
-    />
-    <meta name="theme-color" content="#f5f5f7" />
-    <meta property="og:title" content="AI智能体文件中枢" />
-    <meta
-      property="og:description"
-      content="统一文件、长期记忆、技能资产与 MCP 协作入口。"
-    />
-    <meta property="og:type" content="website" />
-    <style>
-      :root {
-        color-scheme: light;
-        --page: #f5f5f7;
-        --surface: #ffffff;
-        --surface-soft: #fbfbfd;
-        --ink: #1d1d1f;
-        --muted: #6e6e73;
-        --quiet: #86868b;
-        --line: #d2d2d7;
-        --line-soft: #e8e8ed;
-        --blue: #0071e3;
-        --blue-hover: #0077ed;
-        --green: #248a3d;
-        --amber: #bf6a02;
-        --terminal: #1f1f21;
-        --shadow: 0 32px 90px rgba(0, 0, 0, 0.12);
-        --shadow-soft: 0 18px 44px rgba(0, 0, 0, 0.08);
-        --mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
-        --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        margin: 0;
-        color: var(--ink);
-        background: var(--page);
-        font-family: var(--font);
-        line-height: 1.5;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      button {
-        font: inherit;
-      }
-
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-
-      .nav-shell {
-        position: sticky;
-        top: 0;
-        z-index: 20;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        background: rgba(251, 251, 253, 0.78);
-        backdrop-filter: saturate(180%) blur(20px);
-      }
-
-      .nav,
-      .wrap {
-        width: min(1120px, calc(100% - 44px));
-        margin: 0 auto;
-      }
-
-      .nav {
-        height: 52px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-      }
-
-      .brand,
-      .nav-links,
-      .github-icon,
-      .button,
-      .copy-button,
-      .text-link,
-      .tag,
-      .chip {
-        display: inline-flex;
-        align-items: center;
-      }
-
-      .brand {
-        gap: 10px;
-        min-width: 0;
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .brand-mark {
-        width: 26px;
-        height: 26px;
-        display: grid;
-        place-items: center;
-        border-radius: 7px;
-        color: #fff;
-        background: linear-gradient(180deg, #2f7df6, #0066cc);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34);
-        font-size: 11px;
-        font-weight: 800;
-      }
-
-      .brand-name {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .nav-links {
-        gap: 22px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .nav-links a:hover {
-        color: var(--ink);
-      }
-
-      .github-icon {
-        width: 30px;
-        height: 30px;
-        justify-content: center;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 999px;
-        color: var(--ink);
-        background: rgba(255, 255, 255, 0.74);
-        transition:
-          border-color 0.18s ease,
-          background-color 0.18s ease,
-          transform 0.18s ease;
-      }
-
-      .github-icon:hover {
-        border-color: rgba(0, 0, 0, 0.18);
-        background: #fff;
-        transform: translateY(-1px);
-      }
-
-      .github-icon svg {
-        width: 17px;
-        height: 17px;
-        display: block;
-        fill: currentColor;
-      }
-
-      .hero {
-        min-height: min(860px, calc(100svh - 52px));
-        padding: 78px 0 54px;
-        background:
-          linear-gradient(180deg, #ffffff 0, #f5f5f7 78%),
-          var(--page);
-      }
-
-      .hero-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-        align-items: center;
-        gap: 48px;
-      }
-
-      .hero-copy-block,
-      .device,
-      .install-option,
-      .command-panel,
-      .download-card {
-        min-width: 0;
-      }
-
-      .eyebrow {
-        margin: 0 0 14px;
-        color: var(--blue);
-        font-size: 18px;
-        font-weight: 700;
-      }
-
-      h1,
-      h2,
-      h3,
-      p {
-        letter-spacing: 0;
-      }
-
-      h1 {
-        max-width: 610px;
-        margin: 0;
-        font-size: 62px;
-        line-height: 1.02;
-      }
-
-      .hero-title {
-        display: grid;
-        gap: 4px;
-      }
-
-      .hero-title-ai,
-      .hero-title-main {
-        display: block;
-        white-space: nowrap;
-      }
-
-      .hero-title-ai {
-        color: var(--blue);
-        font-size: 0.92em;
-        font-weight: 800;
-      }
-
-      .hero-title-main {
-        font-size: 1em;
-      }
-
-      .hero-copy {
-        max-width: 590px;
-        margin: 22px 0 0;
-        color: var(--muted);
-        font-size: 20px;
-        line-height: 1.5;
-        overflow-wrap: anywhere;
-      }
-
-      .hero-actions,
-      .hero-meta,
-      .mode-actions,
-      .agent-strip,
-      .footer-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .hero-actions {
-        margin-top: 30px;
-      }
-
-      .button,
-      .copy-button,
-      .text-link {
-        min-height: 42px;
-        justify-content: center;
-        gap: 8px;
-        border-radius: 999px;
-        font-weight: 650;
-      }
-
-      .button {
-        padding: 0 21px;
-        border: 1px solid transparent;
-      }
-
-      .button.primary {
-        color: #fff;
-        background: var(--blue);
-      }
-
-      .button.primary:hover {
-        background: var(--blue-hover);
-      }
-
-      .button.secondary {
-        color: var(--blue);
-        background: rgba(0, 113, 227, 0.08);
-      }
-
-      .button.secondary:hover {
-        background: rgba(0, 113, 227, 0.12);
-      }
-
-      .copy-button {
-        min-width: 86px;
-        padding: 0 16px;
-        border: 0;
-        color: #fff;
-        background: var(--ink);
-        cursor: pointer;
-      }
-
-      .copy-button:hover {
-        background: #343437;
-      }
-
-      .copy-button:disabled {
-        cursor: wait;
-        opacity: 0.58;
-      }
-
-      .copy-button.blue {
-        background: var(--blue);
-      }
-
-      .copy-button.blue:hover {
-        background: var(--blue-hover);
-      }
-
-      .text-link {
-        color: var(--blue);
-      }
-
-      .hero-meta {
-        margin-top: 22px;
-      }
-
-      .chip {
-        min-height: 30px;
-        padding: 0 12px;
-        border: 1px solid var(--line-soft);
-        border-radius: 999px;
-        color: var(--muted);
-        background: rgba(255, 255, 255, 0.72);
-        font-size: 13px;
-        font-weight: 600;
-      }
-
-      .device {
-        position: relative;
-        padding: 11px;
-        border: 1px solid rgba(0, 0, 0, 0.12);
-        border-radius: 18px;
-        background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 248, 250, 0.9)),
-          #fff;
-        box-shadow: var(--shadow);
-      }
-
-      .device::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
-        pointer-events: none;
-      }
-
-      .window-bar {
-        height: 32px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 0 12px;
-      }
-
-      .traffic {
-        width: 11px;
-        height: 11px;
-        border-radius: 50%;
-        background: #ff5f57;
-      }
-
-      .traffic:nth-child(2) {
-        background: #febc2e;
-      }
-
-      .traffic:nth-child(3) {
-        background: #28c840;
-      }
-
-      .preview {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        aspect-ratio: 16 / 10;
-        border: 1px solid var(--line-soft);
-        border-radius: 10px;
-        object-fit: cover;
-        object-position: top left;
-        background: #fff;
-      }
-
-      .section {
-        padding: 84px 0;
-      }
-
-      .section.white {
-        background: #fff;
-      }
-
-      .section-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 26px;
-        margin-bottom: 28px;
-      }
-
-      h2 {
-        margin: 0;
-        font-size: 38px;
-        line-height: 1.16;
-      }
-
-      .section-lede {
-        max-width: 690px;
-        margin: 10px 0 0;
-        color: var(--muted);
-        font-size: 17px;
-      }
-
-      .install-grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-        gap: 18px;
-      }
-
-      .install-option {
-        display: grid;
-        gap: 18px;
-        align-content: start;
-        padding: 28px;
-        border: 1px solid var(--line-soft);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: var(--shadow-soft);
-      }
-
-      .install-option.primary-option {
-        border-color: rgba(0, 113, 227, 0.24);
-        background:
-          linear-gradient(180deg, rgba(0, 113, 227, 0.08), rgba(255, 255, 255, 0.96) 62%),
-          #fff;
-      }
-
-      .install-option.docker-option {
-        border-color: rgba(36, 138, 61, 0.22);
-      }
-
-      .install-option.local-option {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: minmax(0, 0.62fr) minmax(0, 1.38fr);
-        align-items: center;
-      }
-
-      .install-option.cli-option {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
-        align-items: center;
-        border-color: rgba(0, 113, 227, 0.2);
-        background:
-          linear-gradient(180deg, rgba(0, 113, 227, 0.05), rgba(255, 255, 255, 0.98)),
-          #fff;
-      }
-
-      .install-copy {
-        display: grid;
-        gap: 12px;
-      }
-
-      .tag {
-        width: max-content;
-        min-height: 28px;
-        padding: 0 11px;
-        border-radius: 999px;
-        color: var(--blue);
-        background: rgba(0, 113, 227, 0.1);
-        font-size: 13px;
-        font-weight: 750;
-      }
-
-      .tag.green {
-        color: var(--green);
-        background: rgba(36, 138, 61, 0.1);
-      }
-
-      .tag.amber {
-        color: var(--amber);
-        background: rgba(191, 106, 2, 0.1);
-      }
-
-      .install-option h3,
-      .feature h3,
-      .download-card h3 {
-        margin: 0;
-        font-size: 27px;
-        line-height: 1.18;
-      }
-
-      .install-option p,
-      .feature p,
-      .download-card p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 15px;
-      }
-
-      .agent-strip {
-        gap: 8px;
-      }
-
-      .agent-pill {
-        min-height: 28px;
-        display: inline-flex;
-        align-items: center;
-        padding: 0 11px;
-        border: 1px solid rgba(0, 113, 227, 0.15);
-        border-radius: 999px;
-        color: var(--blue);
-        background: rgba(0, 113, 227, 0.08);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .command-panel {
-        display: grid;
-        gap: 12px;
-        padding: 18px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        background: #fff;
-      }
-
-      .command-panel.dark {
-        color: #f5f5f7;
-        background: var(--terminal);
-      }
-
-      .docker-option .command-panel {
-        margin-top: 4px;
-      }
-
-      .command-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .command-label {
-        color: var(--blue);
-        font-size: 12px;
-        font-weight: 800;
-      }
-
-      .command-panel.dark .command-label {
-        color: #9ed0ff;
-      }
-
-      .command-text,
-      .prompt-text {
-        margin: 0;
-        padding: 15px;
-        border-radius: 7px;
-        font-family: var(--mono);
-        line-height: 1.48;
-        overflow-x: auto;
-      }
-
-      .prompt-text {
-        color: var(--ink);
-        background: #f5f5f7;
-        font-size: 15px;
-        font-weight: 700;
-        white-space: normal;
-        overflow-wrap: anywhere;
-      }
-
-      .prompt-url {
-        display: block;
-        margin-top: 5px;
-        color: #424245;
-        font-size: 13px;
-      }
-
-      .command-text {
-        color: #f5f5f7;
-        background: #171719;
-        font-size: 14px;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-      }
-
-      .compose-text {
-        max-height: 310px;
-        border-radius: 0 0 7px 7px;
-        white-space: pre;
-        word-break: normal;
-      }
-
-      .compose-details {
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 7px;
-        background: #171719;
-      }
-
-      .compose-details summary {
-        padding: 12px 15px;
-        color: #c7c7cc;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      .compose-details[open] summary {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .compose-start {
-        display: grid;
-        gap: 10px;
-        padding-top: 4px;
-        border-top: 1px solid rgba(255, 255, 255, 0.12);
-      }
-
-      .deploy-facts {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-      }
-
-      .deploy-fact {
-        display: grid;
-        gap: 3px;
-        padding: 10px;
-        border: 1px solid var(--line-soft);
-        border-radius: 8px;
-        background: rgba(251, 251, 253, 0.88);
-      }
-
-      .deploy-fact strong {
-        color: var(--quiet);
-        font-size: 11px;
-      }
-
-      .deploy-fact span {
-        min-width: 0;
-        font-family: var(--mono);
-        font-size: 12px;
-        font-weight: 700;
-        overflow-wrap: anywhere;
-      }
-
-      .deploy-fact.wide {
-        grid-column: 1 / -1;
-      }
-
-      .download-strip {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .download-chip {
-        display: grid;
-        gap: 8px;
-        min-width: 0;
-        padding: 16px;
-        border: 1px solid var(--line-soft);
-        border-radius: 8px;
-        background: #fff;
-      }
-
-      .download-chip strong {
-        font-size: 17px;
-      }
-
-      .download-chip span {
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .download-chip a {
-        width: max-content;
-        color: var(--blue);
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-      }
-
-      .feature {
-        min-height: 178px;
-        display: grid;
-        align-content: start;
-        gap: 10px;
-        padding: 22px;
-        border: 1px solid var(--line-soft);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.82);
-      }
-
-      .feature-kicker {
-        color: var(--blue);
-        font-size: 13px;
-        font-weight: 800;
-      }
-
-      .download-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-      }
-
-      .download-card {
-        display: grid;
-        gap: 14px;
-        padding: 22px;
-        border: 1px solid var(--line-soft);
-        border-radius: 8px;
-        background: #fff;
-      }
-
-      .download-card.recommended {
-        border-color: rgba(0, 113, 227, 0.24);
-        background:
-          linear-gradient(180deg, rgba(0, 113, 227, 0.06), rgba(255, 255, 255, 0.96)),
-          #fff;
-      }
-
-      .download-actions {
-        display: grid;
-        gap: 8px;
-      }
-
-      .download-actions.two {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .download-actions .button,
-      .download-actions .copy-button,
-      .download-actions .text-link {
-        width: 100%;
-      }
-
-      .requirements {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .requirement {
-        padding: 16px;
-        border: 1px solid var(--line-soft);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.74);
-      }
-
-      .requirement strong,
-      .requirement span {
-        display: block;
-      }
-
-      .requirement strong {
-        margin-bottom: 7px;
-        font-size: 17px;
-      }
-
-      .requirement span {
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.55;
-      }
-
-      .footer {
-        padding: 34px 0;
-        border-top: 1px solid var(--line-soft);
-        color: var(--muted);
-        background: #fff;
-        font-size: 13px;
-      }
-
-      .footer .wrap {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 18px;
-        flex-wrap: wrap;
-      }
-
-      .footer-actions {
-        align-items: center;
-      }
-
-      .footer .github-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--ink);
-        font-weight: 650;
-      }
-
-      .footer svg {
-        width: 17px;
-        height: 17px;
-        fill: currentColor;
-      }
-
-      @media (max-width: 980px) {
-        .hero-grid,
-        .install-grid,
-        .install-option.local-option,
-        .install-option.cli-option {
-          grid-template-columns: 1fr;
-        }
-
-        h1 {
-          font-size: 56px;
-        }
-
-        .hero-copy {
-          font-size: 18px;
-        }
-
-        .download-strip,
-        .download-grid,
-        .feature-grid,
-        .requirements {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-      }
-
-      @media (max-width: 720px) {
-        .nav,
-        .wrap {
-          width: calc(100vw - 28px);
-          max-width: calc(100vw - 28px);
-        }
-
-        .nav-links a:not(.github-icon) {
-          display: none;
-        }
-
-        .hero {
-          min-height: auto;
-          padding: 58px 0 46px;
-        }
-
-        .hero-grid {
-          gap: 34px;
-        }
-
-        .eyebrow {
-          font-size: 15px;
-        }
-
-        h1 {
-          font-size: 44px;
-        }
-
-        .hero-title-main {
-          font-size: 0.76em;
-        }
-
-        .hero-copy,
-        .section-lede {
-          font-size: 16px;
-          max-width: 100%;
-        }
-
-        .button,
-        .copy-button {
-          width: 100%;
-        }
-
-        .hero-actions,
-        .mode-actions {
-          gap: 10px;
-        }
-
-        .device {
-          margin-inline: -6px;
-          padding: 7px;
-          border-radius: 13px;
-          overflow: hidden;
-        }
-
-        .window-bar {
-          height: 24px;
-          padding: 0 8px;
-        }
-
-        .traffic {
-          width: 9px;
-          height: 9px;
-        }
-
-        .preview {
-          height: 310px;
-          aspect-ratio: auto;
-          object-fit: cover;
-          object-position: top left;
-        }
-
-        .section {
-          padding: 58px 0;
-        }
-
-        .section-head {
-          display: grid;
-          gap: 16px;
-        }
-
-        h2 {
-          font-size: 31px;
-        }
-
-        .install-option {
-          padding: 20px;
-        }
-
-        .install-option h3,
-        .feature h3,
-        .download-card h3 {
-          font-size: 24px;
-        }
-
-        .command-top {
-          align-items: flex-start;
-          flex-direction: column;
-        }
-
-        .deploy-facts,
-        .download-strip,
-        .download-grid,
-        .feature-grid,
-        .requirements,
-        .download-actions.two {
-          grid-template-columns: 1fr;
-        }
-
-        .command-text {
-          max-width: 100%;
-          font-size: 13px;
-        }
-
-        .prompt-text {
-          font-size: 14px;
-        }
-
-        .download-chip a {
-          width: auto;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="nav-shell">
-      <nav class="nav" aria-label="主导航">
-        <a class="brand" href="#top" aria-label="AI智能体文件中枢首页">
-          <span class="brand-mark">AF</span>
-          <span class="brand-name">Agent File Hub</span>
-        </a>
-        <div class="nav-links">
-          <a href="#install">安装</a>
-          <a href="#cli">CLI</a>
-          <a href="#features">能力</a>
-          <a href="#downloads">下载</a>
-          <a class="github-icon" href="https://github.com/duolabmeng6/ai-agent-file-hub" aria-label="GitHub 仓库">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 .5A12 12 0 0 0 8.2 23.88c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.43 11.43 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.93.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z" />
-            </svg>
-            <span class="sr-only">GitHub 仓库</span>
-          </a>
-        </div>
-      </nav>
-    </div>
-
-    <header class="hero" id="top">
-      <div class="wrap hero-grid">
-        <div class="hero-copy-block">
-          <p class="eyebrow">Agent File Hub</p>
-          <h1 class="hero-title">
-            <span class="hero-title-ai">AI</span>
-            <span class="hero-title-main">智能体文件中枢</span>
-          </h1>
-          <p class="hero-copy">
-            把本地目录、对象存储、SFTP 和 Git 仓库统一成一个给人和 AI Agent 共用的文件工作台。
-          </p>
-          <div class="hero-actions" aria-label="主要操作">
-            <a class="button primary" href="#install">复制安装入口</a>
-            <a class="button secondary" href="#cli">CLI 模式</a>
-          </div>
-          <div class="hero-meta" aria-label="版本和部署信息">
-            <span class="chip">v1.0.12</span>
-            <span class="chip">Docker 推荐</span>
-            <span class="chip">afile CLI</span>
-            <span class="chip">端口 18787</span>
-          </div>
-        </div>
-
-        <div class="device" aria-label="产品界面预览">
-          <div class="window-bar" aria-hidden="true">
-            <span class="traffic"></span>
-            <span class="traffic"></span>
-            <span class="traffic"></span>
-          </div>
-          <img
-            class="preview"
-            src="./assets/product-preview.png"
-            width="1440"
-            height="900"
-            alt="Agent File Hub 文件管理界面截图"
-          />
-        </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent File Hub · AI 智能体文件中枢</title>
+  <meta name="description" content="人与 AI Agent 共用的文件工作台。交给 Agent 安装，或用 Docker Compose 部署到服务器。" />
+  <meta name="theme-color" content="#fafafa" />
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #fafafa; --surface: #fff; --soft: #f3f4f6; --ink: #202124;
+      --muted: #73767c; --line: #e6e8eb; --accent: #1769e0; --accent-hover: #1055b9;
+      --tint: #edf4ff; --shadow: 0 24px 72px #14233b0a;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --mono: "SFMono-Regular", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+    body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.65; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    a, button { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
+    .wrap { width: min(1080px, calc(100% - 64px)); margin-inline: auto; }
+    .nav { height: 80px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 16px; font-weight: 650; letter-spacing: -.4px; }
+    .brand-mark { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--ink); color: var(--surface); font-size: 12px; font-weight: 750; letter-spacing: -.5px; }
+    .nav-links { display: flex; align-items: center; gap: 30px; color: var(--muted); font-size: 14px; }
+    .nav-links a:hover, .text-link:hover { color: var(--accent); }
+    .hero { text-align: center; padding: 76px 0 0; }
+    .eyebrow { margin: 0 0 22px; color: var(--muted); font-size: 14px; letter-spacing: 1.5px; }
+    h1 { margin: 0; font-size: clamp(38px, 5vw, 64px); font-weight: 650; line-height: 1.2; letter-spacing: -2.5px; }
+    .hero-copy { max-width: 610px; margin: 28px auto 0; color: var(--muted); font-size: 18px; line-height: 1.85; }
+    .hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 12px 24px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 600; transition: background .16s, border-color .16s; }
+    .button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .button.primary:hover { background: var(--accent-hover); }
+    .button.secondary:hover { border-color: var(--muted); }
+    .hero-note { margin: 18px 0 0; font-size: 12px; color: var(--muted); }
+    .preview { margin: 64px 0 0; padding: 10px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); }
+    .preview img { width: 100%; height: auto; display: block; border-radius: 12px; }
+    .section { padding-top: 104px; }
+    .section-head { margin-bottom: 32px; }
+    .section-head h2 { margin: 0; font-size: 30px; line-height: 1.3; font-weight: 620; letter-spacing: -1px; }
+    .section-head p { margin: 12px 0 0; font-size: 16px; color: var(--muted); }
+    .install-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+    .install-card { display: flex; flex-direction: column; min-width: 0; padding: 36px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); scroll-margin-top: 36px; }
+    .card-icon { width: 44px; height: 44px; display: grid; place-items: center; background: var(--tint); border-radius: 14px; color: var(--accent); }
+    .card-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .card-label { margin: 26px 0 8px; color: var(--muted); font-size: 12px; letter-spacing: .5px; }
+    .install-card h3 { margin: 0; font-size: 26px; font-weight: 620; letter-spacing: -.7px; line-height: 1.4; }
+    .card-description { min-height: 54px; margin: 14px 0 26px; color: var(--muted); font-size: 14px; line-height: 1.9; }
+    .command { margin: 0 0 24px; padding: 22px; min-height: 150px; border-radius: 14px; background: var(--soft); font-family: var(--mono); font-size: 12px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .agent .command { background: var(--tint); font-family: var(--font); font-size: 14px; }
+    .card-actions { display: flex; align-items: center; gap: 20px; margin-top: auto; flex-wrap: wrap; }
+    .text-link { color: var(--muted); font-size: 13px; }
+    .card-footnote { color: var(--muted); font-size: 12px; margin: 18px 0 0; }
+    .getting-started { display: flex; align-items: center; gap: 12px; margin: 28px 0 0; padding: 0 2px; font-size: 13px; color: var(--muted); }
+    .getting-started span { color: var(--ink); }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+    .feature { min-width: 0; }
+    .feature-kicker { color: var(--accent); font-size: 12px; letter-spacing: 1px; margin-bottom: 16px; }
+    .feature h3 { margin: 0 0 12px; font-size: 19px; font-weight: 600; }
+    .feature p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.9; }
+    footer { margin-top: 100px; padding: 28px 0 36px; border-top: 1px solid var(--line); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 12px; }
+    .footer-links { display: flex; gap: 24px; }
+    .status { min-height: 22px; margin: 16px 0 -6px; color: var(--muted); font-size: 12px; }
+    @media (prefers-color-scheme: dark) {
+      :root { color-scheme: dark; --page:#151618; --surface:#1d1f22; --soft:#272a2e; --ink:#f0f1f3; --muted:#a3a7af; --line:#32353b; --accent:#75a9ff; --accent-hover:#4b8df8; --tint:#22334d; --shadow:0 24px 72px #0003; }
+      .button.primary { color:#111827; }
+    }
+    @media (max-width: 760px) {
+      .wrap { width: calc(100% - 40px); }
+      .nav { height: 68px; }
+      .nav-links { gap: 18px; font-size: 13px; }
+      .nav-links .features-link { display: none; }
+      .brand { font-size: 14px; gap: 8px; }
+      .hero { padding-top: 58px; }
+      h1 { font-size: clamp(32px, 7.8vw, 50px); letter-spacing: -1.5px; }
+      .hero-copy { font-size: 16px; }
+      .preview { margin-top: 44px; padding: 5px; border-radius: 12px; }
+      .preview img { border-radius: 8px; }
+      .section { padding-top: 72px; }
+      .install-grid { grid-template-columns: 1fr; gap: 20px; }
+      .install-card { padding: 28px; }
+      .section-head h2 { font-size: 26px; }
+      .feature-grid { grid-template-columns: 1fr; gap: 32px; }
+      .feature-kicker { margin-bottom: 10px; }
+      .card-description { min-height: 0; }
+      .getting-started { display: block; line-height: 1.9; }
+      .footer-inner { flex-direction: column; gap: 12px; }
+      footer { margin-top: 68px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .button { transition: none; } }
+  </style>
+</head>
+<body>
+  <nav class="nav wrap" aria-label="主导航">
+    <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">AF</span>Agent File Hub</a>
+    <div class="nav-links"><a href="#install">开始使用</a><a class="features-link" href="#features">产品能力</a><a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub ↗</a></div>
+  </nav>
+  <header class="hero wrap" id="top">
+    <p class="eyebrow">人与 Agent 共用的文件工作台</p>
+    <h1>AI 智能体文件中枢</h1>
+    <p class="hero-copy">连接本地目录、对象存储和 Git 仓库，<br />让文件、知识与项目记忆随时可用。</p>
+    <div class="hero-actions"><a class="button primary" href="#agent">交给 Agent 安装 <span aria-hidden="true">↗</span></a><a class="button secondary" href="#server">部署到服务器</a></div>
+    <p class="hero-note">开源 · 自托管 · v1.0.12</p>
+    <figure class="preview"><img src="./assets/product-preview.png" width="1440" height="900" alt="Agent File Hub 文件工作台预览" fetchpriority="high" /></figure>
+  </header>
+  <main class="wrap">
+    <section class="section" id="install" aria-labelledby="install-title">
+      <div class="section-head"><h2 id="install-title">开始使用</h2><p>在自己的电脑上交给 Agent，在服务器上使用 Docker Compose。</p></div>
+      <div class="install-grid">
+        <article class="install-card agent" id="agent">
+          <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z" /></svg></div>
+          <p class="card-label">本机使用</p><h3>交给你的 Agent</h3>
+          <p class="card-description">把下面这句话发给 Codex、Claude 或 OpenClaw。<br />Agent 会检查环境，完成安装并告诉你访问地址。</p>
+          <pre class="command" id="agent-skill-prompt">请阅读下面的安装技能，帮我安装并启动 Agent File Hub：
+https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md</pre>
+          <div class="card-actions"><button class="button primary" type="button" data-copy="agent-skill-prompt">复制给 Agent</button><a class="text-link" href="https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md">查看安装技能 ↗</a></div>
+          <p class="card-footnote">系统识别、安装和启动，由 Agent 处理。</p>
+        </article>
+        <article class="install-card" id="server">
+          <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="2"/><rect x="3" y="14" width="18" height="6" rx="2"/><path d="M7 7h.01M7 17h.01M16 7h2M16 17h2"/></svg></div>
+          <p class="card-label">服务器部署</p><h3>Docker Compose</h3>
+          <p class="card-description">准备好 Docker 和 Compose，运行下面的命令。<br />数据持久化到 Docker 卷，重启后继续使用。</p>
+          <pre class="command" id="compose-command">git clone https://github.com/duolabmeng6/ai-agent-file-hub.git
+cd ai-agent-file-hub
+docker compose up -d</pre>
+          <div class="card-actions"><button class="button secondary" type="button" data-copy="compose-command">复制部署命令</button><a class="text-link" href="https://github.com/duolabmeng6/ai-agent-file-hub/blob/main/docker-compose.yaml">查看 Compose ↗</a></div>
+          <p class="card-footnote">启动后访问 http://服务器 IP:18787</p>
+        </article>
       </div>
-    </header>
-
-    <main>
-      <section class="section white" id="install">
-        <div class="wrap">
-          <div class="section-head">
-            <div>
-              <h2>选择一种启动方式</h2>
-              <p class="section-lede">把一句话发给 AI Agent 最省事；服务器长期运行推荐 Docker；本机和脚本调用使用 afile CLI。</p>
-            </div>
-            <a class="button secondary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.12">Releases</a>
-          </div>
-
-          <div class="install-grid">
-            <article class="install-option primary-option" id="codex-skill">
-              <div class="install-copy">
-                <span class="tag">最省事 · AI Agent</span>
-                <h3>一句话交给 AI Agent</h3>
-                <p>智能体会读取 Skill 文件，检查系统、端口和 Docker 环境，然后完成安装、启动和访问验证。</p>
-                <div class="agent-strip" aria-label="支持的智能体">
-                  <span class="agent-pill">OpenClaw</span>
-                  <span class="agent-pill">Claude</span>
-                  <span class="agent-pill">Codex</span>
-                </div>
-              </div>
-
-              <div class="command-panel">
-                <div class="command-top">
-                  <span class="command-label">复制后发给你的 AI Agent</span>
-                  <div class="mode-actions">
-                    <button class="copy-button blue" data-copy="agent-skill-prompt">复制一句话</button>
-                    <a class="text-link" href="https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md">查看 Skill</a>
-                  </div>
-                </div>
-                <p class="prompt-text" id="agent-skill-prompt">请帮我安装 AgentFileHub，安装技能:<span class="prompt-url">https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md</span></p>
-              </div>
-            </article>
-
-            <article class="install-option docker-option">
-              <div class="install-copy">
-                <span class="tag green">推荐 · 服务器</span>
-                <h3>Docker Compose 手动部署</h3>
-                <p>在线读取官方 docker-compose.yaml；复制保存后直接启动。自动安装器也下载同一个文件，不再在脚本里生成配置。</p>
-              </div>
-
-              <div class="command-panel dark">
-                <div class="command-top">
-                  <span class="command-label">docker-compose.yaml</span>
-                  <div class="mode-actions">
-                    <button class="copy-button" data-copy="docker-compose-content" data-copy-raw disabled>加载中</button>
-                    <a class="text-link" href="./docker-compose.yaml" download>下载文件</a>
-                  </div>
-                </div>
-                <details class="compose-details">
-                  <summary>查看 docker-compose.yaml 内容</summary>
-                  <pre class="command-text compose-text" id="docker-compose-content" aria-live="polite">正在读取官方 Compose 文件…</pre>
-                </details>
-                <div class="compose-start">
-                  <div class="command-top">
-                    <span class="command-label">保存文件后启动</span>
-                    <button class="copy-button" data-copy="docker-compose-start-command">复制启动命令</button>
-                  </div>
-                  <p class="command-text" id="docker-compose-start-command">mkdir -p data storage
-data_group_id="$(id -g)"
-chgrp "$data_group_id" data storage &amp;&amp; chmod 2770 data storage
-printf 'DATA_GROUP_ID=%s\n' "$data_group_id" &gt; .env
-docker compose up -d</p>
-                </div>
-              </div>
-
-              <div class="deploy-facts" aria-label="Docker 部署信息">
-                <div class="deploy-fact">
-                  <strong>访问地址</strong>
-                  <span>127.0.0.1:18787</span>
-                </div>
-                <div class="deploy-fact">
-                  <strong>目录</strong>
-                  <span>~/agent-file-hub</span>
-                </div>
-                <div class="deploy-fact wide">
-                  <strong>镜像</strong>
-                  <span>duolabmeng/agent_file_hub:v1.0.12</span>
-                </div>
-              </div>
-              <div class="mode-actions">
-                <a class="text-link" href="./docker-compose.yaml">查看原文件</a>
-                <a class="text-link" href="./install.sh">可选：自动安装脚本</a>
-                <a class="text-link" href="https://hub.docker.com/r/duolabmeng/agent_file_hub">Docker Hub</a>
-              </div>
-            </article>
-
-            <article class="install-option local-option">
-              <div class="install-copy">
-                <span class="tag amber">本机 · 客户端</span>
-                <h3>下载对应系统版本</h3>
-                <p>每个平台只需一个 afile，内置 Web、CLI 和 MCP，解压后即可运行。</p>
-              </div>
-
-              <div class="download-strip" aria-label="系统下载入口">
-                <div class="download-chip">
-                  <strong>Windows</strong>
-                  <span>x64 / ARM64</span>
-                  <a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-windows-amd64.zip">下载 x64</a>
-                </div>
-                <div class="download-chip">
-                  <strong>macOS</strong>
-                  <span>Apple Silicon / Intel</span>
-                  <a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-darwin-arm64.gz">下载 arm64</a>
-                </div>
-                <div class="download-chip">
-                  <strong>Linux</strong>
-                  <span>x64 / ARM64</span>
-                  <a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-linux-amd64.gz">下载 x64</a>
-                </div>
-                <div class="download-chip">
-                  <strong>全部版本</strong>
-                  <span>Release assets</span>
-                  <a href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.12">打开 Releases</a>
-                </div>
-              </div>
-            </article>
-
-            <article class="install-option cli-option" id="cli">
-              <div class="install-copy">
-                <span class="tag">CLI · Agent / 脚本</span>
-                <h3>afile 命令行模式</h3>
-                <p>CLI 负责启动 Web 工作台、输出 MCP 配置和复用 Workspace 文件能力。储存器和协作目录先在 Web 中配置，终端只拿 workspace code 操作文件。</p>
-              </div>
-
-              <div class="command-panel dark">
-                <div class="command-top">
-                  <span class="command-label">CLI 常用命令</span>
-                  <div class="mode-actions">
-                    <button class="copy-button" data-copy="cli-start-command">复制启动</button>
-                    <button class="copy-button" data-copy="cli-workspace-command">复制文件操作</button>
-                  </div>
-                </div>
-                <p class="command-text" id="cli-start-command">~/agent-file-hub/afile serve --host 127.0.0.1 --port 9000 --background --open</p>
-                <p class="command-text" id="cli-workspace-command">~/agent-file-hub/afile mcp config &lt;workspace-code&gt; --server http://127.0.0.1:9000 --json && ~/agent-file-hub/afile workspace ls &lt;workspace-code&gt; /</p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="features">
-        <div class="wrap">
-          <div class="section-head">
-            <div>
-              <h2>给 Agent 使用的文件基础设施</h2>
-              <p class="section-lede">一个入口管理文件、知识、技能资产和自动化访问，减少 AI Agent 在项目之间来回找上下文的成本。</p>
-            </div>
-          </div>
-
-          <div class="feature-grid">
-            <article class="feature">
-              <div class="feature-kicker">Files</div>
-              <h3>统一文件工作台</h3>
-              <p>本地目录、OSS/S3、SFTP 和 Git 仓库集中管理，浏览器里直接上传、下载和维护。</p>
-            </article>
-            <article class="feature">
-              <div class="feature-kicker">Memory</div>
-              <h3>长期记忆中心</h3>
-              <p>用目录和 Markdown 承载项目规则、Prompt、Workflow、知识库和版本化材料。</p>
-            </article>
-            <article class="feature">
-              <div class="feature-kicker">Agent</div>
-              <h3>自动化访问入口</h3>
-              <p>共享文件资产可以服务 REST、OpenAPI、MCP 和 afile CLI，让 Agent 安全访问工作区。</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section white" id="downloads">
-        <div class="wrap">
-          <div class="section-head">
-            <div>
-              <h2>下载与运行</h2>
-              <p class="section-lede">服务器用 Docker；桌面端选择对应系统；脚本和 AI 技能使用 afile CLI。启动后访问 http://127.0.0.1:18787 初始化账号。</p>
-            </div>
-          </div>
-
-          <div class="download-grid">
-            <article class="download-card recommended">
-              <span class="tag green">服务器推荐</span>
-              <h3>Docker</h3>
-              <p>云服务器、私有服务器和长期部署环境。</p>
-              <div class="download-actions">
-                <button class="copy-button blue" data-copy="docker-compose-content" data-copy-raw disabled>加载 Compose</button>
-                <a class="text-link" href="https://hub.docker.com/r/duolabmeng/agent_file_hub">Docker Hub</a>
-              </div>
-            </article>
-            <article class="download-card">
-              <span class="tag">桌面端</span>
-              <h3>Windows</h3>
-              <p>Windows 10 及以上，下载后运行。</p>
-              <div class="download-actions two">
-                <a class="button secondary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-windows-amd64.zip">下载 x64</a>
-                <a class="button secondary" href="https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-windows-arm64.zip">下载 ARM64</a>
-              </div>
-            </article>
-            <article class="download-card">
-              <span class="tag">命令行</span>
-              <h3>macOS / Linux</h3>
-              <p>direct 安装只放置一个 <code>afile</code>，支持直接启动 Web、脚本和 AI 技能调用。</p>
-              <div class="download-actions two">
-                <button class="copy-button blue" data-copy="direct-install-command">Direct 安装</button>
-                <button class="copy-button blue" data-copy="cli-start-command">CLI 启动</button>
-              </div>
-            </article>
-          </div>
-
-          <p class="sr-only" id="direct-install-command">curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && AGENT_FILE_HUB_MODE=direct bash install.sh</p>
-          <p class="sr-only" id="linux-run-command">curl -fL -o afile.gz https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-linux-amd64.gz &amp;&amp; gzip -dc afile.gz &gt; afile &amp;&amp; chmod +x afile &amp;&amp; PORT=18787 FILE_BROWSER_ROOT=./storage ./afile</p>
-          <p class="sr-only" id="macos-run-command">curl -fL -o afile.gz https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.12/afile-darwin-arm64.gz &amp;&amp; gzip -dc afile.gz &gt; afile &amp;&amp; chmod +x afile &amp;&amp; PORT=18787 FILE_BROWSER_ROOT=./storage ./afile</p>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="wrap">
-          <div class="section-head">
-            <div>
-              <h2>系统要求</h2>
-              <p class="section-lede">Docker 适合生产环境；二进制适合桌面端和轻量运行。</p>
-            </div>
-          </div>
-          <div class="requirements">
-            <div class="requirement">
-              <strong>Docker</strong>
-              <span>Docker 24+ / Compose v2</span>
-              <span>linux/amd64 / linux/arm64</span>
-            </div>
-            <div class="requirement">
-              <strong>Windows</strong>
-              <span>Windows 10 及以上</span>
-              <span>x64 / ARM64</span>
-            </div>
-            <div class="requirement">
-              <strong>macOS</strong>
-              <span>macOS 12 Monterey 及以上</span>
-              <span>Intel / Apple Silicon</span>
-            </div>
-            <div class="requirement">
-              <strong>Linux</strong>
-              <span>主流 glibc 或 musl 发行版</span>
-              <span>x64 / ARM64</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="wrap">
-        <span>AI智能体文件中枢 · v1.0.12</span>
-        <div class="footer-actions">
-          <a class="text-link" href="./version.json">版本文件</a>
-          <a class="github-link" href="https://github.com/duolabmeng6/ai-agent-file-hub" aria-label="GitHub 仓库">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 .5A12 12 0 0 0 8.2 23.88c.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.43 11.43 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.49 5.93.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z" />
-            </svg>
-            <span>GitHub 仓库</span>
-          </a>
-        </div>
+      <p class="getting-started"><span>首次打开</span>　跟随页面设置管理员账号，即可开始管理文件。</p>
+      <p class="status" role="status" aria-live="polite" id="copy-status"></p>
+    </section>
+    <section class="section" id="features" aria-labelledby="features-title">
+      <div class="section-head"><h2 id="features-title">从文件，到 Agent 的上下文</h2></div>
+      <div class="feature-grid">
+        <article class="feature"><div class="feature-kicker">01 / 文件</div><h3>统一管理</h3><p>本地目录、OSS / S3、SFTP、Git 仓库，在一个工作台里浏览和维护。</p></article>
+        <article class="feature"><div class="feature-kicker">02 / 记忆</div><h3>积累项目知识</h3><p>用目录和 Markdown 保存规则、文档与技能，让项目经验持续沉淀。</p></article>
+        <article class="feature"><div class="feature-kicker">03 / 协作</div><h3>连接你的 Agent</h3><p>通过 MCP 和授权目录，让 Agent 读取与维护文件，也能把文档分享给团队。</p></article>
       </div>
-    </footer>
-
-    <script>
-      const composeTarget = document.getElementById("docker-compose-content");
-      const composeButtons = document.querySelectorAll('[data-copy="docker-compose-content"]');
-
-      fetch("./docker-compose.yaml", { cache: "no-cache" })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-          return response.text();
-        })
-        .then((content) => {
-          composeTarget.textContent = content.trimEnd();
-          composeButtons.forEach((button) => {
-            button.disabled = false;
-            button.textContent = "复制 Compose";
-          });
-        })
-        .catch((error) => {
-          composeTarget.textContent = `Compose 文件加载失败：${error.message}`;
-          composeButtons.forEach((button) => {
-            button.disabled = true;
-            button.textContent = "加载失败";
-          });
-        });
-
-      document.querySelectorAll("[data-copy]").forEach((button) => {
-        button.addEventListener("click", async () => {
-          const target = document.getElementById(button.dataset.copy);
-          if (!target) return;
-          const text = button.hasAttribute("data-copy-raw")
-            ? `${target.textContent.trimEnd()}\n`
-            : target.textContent.replace(/\s+/g, " ").trim();
-          const oldText = button.textContent;
-          try {
-            await navigator.clipboard.writeText(text);
-            button.textContent = "已复制";
-          } catch (error) {
-            button.textContent = "复制失败";
-          }
-          setTimeout(() => {
-            button.textContent = oldText;
-          }, 1600);
-        });
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><span>Agent File Hub · v1.0.12</span><div class="footer-links"><a href="https://github.com/duolabmeng6/ai-agent-file-hub">GitHub ↗</a><a href="https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md">Agent 安装技能 ↗</a></div></div></footer>
+  <script>
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const target = document.getElementById(button.dataset.copy);
+        const status = document.getElementById("copy-status");
+        const label = button.textContent;
+        button.disabled = true;
+        try {
+          await navigator.clipboard.writeText(target.textContent.trim() + "\n");
+          button.textContent = "已复制";
+          status.textContent = button.dataset.copy === "agent-skill-prompt" ? "已复制，粘贴给你的 Agent 即可。" : "部署命令已复制，粘贴到服务器终端运行。";
+        } catch (error) {
+          status.textContent = "复制失败，请选中上方内容手动复制。";
+        } finally {
+          setTimeout(() => { button.textContent = label; button.disabled = false; }, 1600);
+        }
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
