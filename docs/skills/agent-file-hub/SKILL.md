@@ -112,7 +112,7 @@ AGENT_FILE_HUB_MODE=direct bash install.sh
 Pin a specific version:
 
 ```bash
-AGENT_FILE_HUB_VERSION=v1.0.12 AGENT_FILE_HUB_MODE=direct bash install.sh
+AGENT_FILE_HUB_VERSION=v1.0.13 AGENT_FILE_HUB_MODE=direct bash install.sh
 ```
 
 Linux x64 asset:

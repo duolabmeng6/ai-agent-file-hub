@@ -40,4 +40,4 @@ docker compose up -d
 - 用 Markdown 与目录保存文档、知识和项目记忆。
 - 通过 MCP 与授权目录连接 Agent，把文档分享给团队。
 
-版本：v1.0.12 · [源代码](https://github.com/duolabmeng6/ll-filebrowser)
+版本：v1.0.13 · [源代码](https://github.com/duolabmeng6/ll-filebrowser)
