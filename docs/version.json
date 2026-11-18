@@ -1,22 +1,22 @@
 {
-  "version": "v1.0.14",
-  "release_url": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.14",
-  "checksums_url": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/checksums.txt",
+  "version": "v1.0.15",
+  "release_url": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/tag/v1.0.15",
+  "checksums_url": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/checksums.txt",
   "homepage_url": "https://my.rongyiapi.com/ai-agent-file-hub/",
   "repository_url": "https://github.com/duolabmeng6/ai-agent-file-hub",
   "install_script_url": "https://my.rongyiapi.com/ai-agent-file-hub/install.sh",
   "docker_compose_url": "https://my.rongyiapi.com/ai-agent-file-hub/docker-compose.yaml",
   "skill_url": "https://my.rongyiapi.com/ai-agent-file-hub/skills/agent-file-hub/SKILL.md",
-  "docker_image": "duolabmeng/agent_file_hub:v1.0.14",
+  "docker_image": "duolabmeng/agent_file_hub:v1.0.15",
   "docker_update_command": "curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && sudo sh install.sh docker",
   "direct_update_command": "curl -fsSL https://my.rongyiapi.com/ai-agent-file-hub/install.sh -o install.sh && AGENT_FILE_HUB_MODE=direct bash install.sh",
   "assets": {
-    "linux_amd64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/afile-linux-amd64.gz",
-    "linux_arm64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/afile-linux-arm64.gz",
-    "darwin_amd64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/afile-darwin-amd64.gz",
-    "darwin_arm64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/afile-darwin-arm64.gz",
-    "windows_amd64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/afile-windows-amd64.zip",
-    "windows_arm64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.14/afile-windows-arm64.zip"
+    "linux_amd64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/afile-linux-amd64.gz",
+    "linux_arm64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/afile-linux-arm64.gz",
+    "darwin_amd64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/afile-darwin-amd64.gz",
+    "darwin_arm64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/afile-darwin-arm64.gz",
+    "windows_amd64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/afile-windows-amd64.zip",
+    "windows_arm64": "https://github.com/duolabmeng6/ai-agent-file-hub/releases/download/v1.0.15/afile-windows-arm64.zip"
   },
-  "updated_at": "2026-11-18T06:23:50Z"
+  "updated_at": "2026-11-18T07:08:50Z"
 }
